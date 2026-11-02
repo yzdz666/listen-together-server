@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LX Music 二改版下载 - 月下独酌</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --card: #ffffff; --fg: #222; --sub: #7a7f87;
+    --primary: #4daf7c; --primary-deep: #35895e; --chip: #eef1f4;
+    --border: #e5e8ec; --warn-bg: #fff7e6;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #14161a; --card: #1e2126; --fg: #e8eaed; --sub: #9aa1a9; --chip: #2a2e35; --border: #33383f; --warn-bg: #3a3222; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--fg); line-height: 1.6; }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 24px 16px 60px; }
+  header { text-align: center; margin: 20px 0 28px; }
+  header h1 { font-size: 24px; margin: 0 0 8px; }
+  header p { color: var(--sub); margin: 0; font-size: 13px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 20px; margin-bottom: 16px; }
+  .card h2 { font-size: 16px; margin: 0 0 12px; }
+  .ver { font-size: 13px; color: var(--sub); }
+  .ver b { color: var(--primary); font-size: 15px; }
+  .btn { display: block; width: 100%; text-align: center; padding: 13px 16px; border-radius: 12px; text-decoration: none; font-weight: 600; font-size: 15px; margin-top: 10px; }
+  .btn.primary { background: var(--primary); color: #fff; }
+  .btn.primary:active { background: var(--primary-deep); }
+  .btn.ghost { background: var(--chip); color: var(--fg); }
+  .btn small { display: block; font-weight: 400; font-size: 11px; opacity: .8; margin-top: 2px; }
+  ul { margin: 8px 0; padding-left: 20px; font-size: 13.5px; }
+  li { margin: 4px 0; }
+  .muted { color: var(--sub); font-size: 12.5px; }
+  code { background: var(--chip); padding: 2px 6px; border-radius: 6px; font-size: 12px; word-break: break-all; }
+  .warn { background: var(--warn-bg); border-radius: 10px; padding: 10px 12px; font-size: 12.5px; margin-top: 12px; }
+  footer { text-align: center; color: var(--sub); font-size: 12px; margin-top: 28px; }
+  footer a { color: var(--primary); text-decoration: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>LX Music 二改版</h1>
+    <p>二改：月下独酌 · QQ 3139606844</p>
+  </header>
+
+  <section class="card">
+    <h2>安装包</h2>
+    <p class="ver">最新版本 <b id="ver">v1.18.0</b> · 更新于 <span id="date">2026-11-02</span></p>
+    <a class="btn primary" id="btnArm" href="downloads/LXMusic-Mod-v1.18.0-arm64-v8a.apk">下载安卓安装包（推荐）<small>arm64-v8a · 2016 年后的绝大多数手机</small></a>
+    <a class="btn ghost" id="btnUni" href="downloads/LXMusic-Mod-v1.18.0-universal.apk">下载全架构安装包<small>universal · 兼容老旧设备 / 模拟器</small></a>
+    <a class="btn ghost" id="btnBackscreen" href="downloads/LXMusic-Mod-v1.18.0-backscreen-arm64-v8a.apk">下载背屏 / 原子岛兼容版<small>小米背屏 · iQOO 原子随身听（包名白名单版，与正版汽水音乐不能共存）</small></a>
+    <div class="warn muted">安装时如提示「未知来源」，允许一次即可；与原版包名不同，可共存。覆盖安装旧版二改版会保留数据。</div>
+  </section>
+
+  <section class="card">
+    <h2>本版更新（v1.18.0）</h2>
+    <ul>
+      <li>新增：完整音质体系，支持 128K / 192K / 320K / FLAC / FLAC 24bit / Hi-Res / Atmos / Atmos+ / Master，并新增对应彩色徽章</li>
+      <li>新增：安卓原生锁屏显示——设置项「锁屏显示」，一键直达 MIUI/HyperOS 锁屏显示权限页，锁屏歌词/播放控制</li>
+      <li>修复：桌面歌词多行模式不逐字、翻译不显示——原生自绘歌词行，歌词逐字染色 + 翻译小字同行显示</li>
+      <li>新增：全平台逐字歌词兜底（无逐字歌词的音源按行时间自动生成），并统一歌词时间轴精度</li>
+      <li>升级：音效系统新增人声增强 / 超重低音 / 3D 环绕 / 现场 / 电子 / 摇滚 / 民谣 / 古典 / 爵士 / 影院 / 音乐厅等 12 组预设，新增响度增强与可重置均衡器</li>
+      <li>修复：设置 Master 却显示 FLAC 的徽标问题，回退档位时不再错误显示</li>
+      <li>继承：一键下载歌单、本地音乐独立页面、WebDAV 修复、赞助码居中</li>
+    </ul>
+    <p class="muted">历史版本说明见源码包内 doc/mod-features.md。</p>
+  </section>
+
+  <section class="card">
+    <h2>源码 / 自建一起听</h2>
+    <p class="muted">基于 <a href="https://github.com/lyswhut/lx-music-mobile" style="color:var(--primary)">lyswhut/lx-music-mobile</a> 修改；部分功能移植自 <a href="https://github.com/WalnutBai/lx-lxwalnut-music-mobile" style="color:var(--primary)">LX-X Music</a>，详见关于页引用项目。源码已托管 GitHub：</p>
+    <ul>
+      <li>App 源码：<a href="https://github.com/yzdz666/lx-music-mobile-mod" style="color:var(--primary)">yzdz666/lx-music-mobile-mod</a></li>
+      <li>服务端 / 网页版源码：<a href="https://github.com/yzdz666/listen-together-server" style="color:var(--primary)">yzdz666/listen-together-server</a></li>
+    </ul>
+    <a class="btn ghost" href="downloads/lx-music-mod-src-v1.18.0.zip">下载二改源码（打包版）<small>含 listen-together-server 与全部二改代码（不含签名密钥）</small></a>
+    <a class="btn ghost" href="admin.html">管理后台<small>上传安装包 / 源码 / 发布更新日志（需管理密码）</small></a>
+    <ul>
+      <li>自建房间服务器：<code>cd listen-together-server && npm install && node index.js</code></li>
+      <li>App 设置 → 其他 → 一起听服务器地址，填 <code>ws://你的服务器:23333</code>（自编译需自配签名）</li>
+      <li>网页版直接访问 <code>http://你的服务器:23333/</code></li>
+      <li>详细说明见源码包 <code>listen-together-server/README.md</code></li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <h2>一起听 · 网页版</h2>
+    <p class="muted">手机开房，电脑/平板浏览器打开下面地址，输入房间码即可同步收听（含音频、进度、歌词）。</p>
+    <a class="btn ghost" href="/">打开一起听网页版</a>
+  </section>
+
+  <footer>
+    仅供学习交流，请支持正版音乐 · <a href="/">一起听网页版</a>
+  </footer>
+</div>
+<script>
+  // 分享网关要求所有请求都带 sharecode，站内链接统一补上当前页面的查询参数
+  var qs = location.search
+  Array.prototype.forEach.call(document.querySelectorAll('a[href^="/"], a[href^="downloads/"]'), function (a) {
+    if (a.getAttribute('href').indexOf('sharecode') === -1) a.setAttribute('href', a.getAttribute('href') + qs)
+  })
+  fetch('downloads/version.json' + qs).then(r => r.json()).then(info => {
+    if (!info || !info.version) return
+    document.getElementById('ver').textContent = 'v' + info.version
+    if (info.date) document.getElementById('date').textContent = info.date
+    if (info.download && typeof info.download === 'object') {
+      if (info.download['arm64-v8a']) document.getElementById('btnArm').href = info.download['arm64-v8a']
+      if (info.download.universal) document.getElementById('btnUni').href = info.download.universal
+    }
+  }).catch(() => {
+    // 拉取版本信息失败时保留页面上的默认链接（脚本已补 sharecode），不影响手动下载
+  })
+</script>
+</body>
+</html>

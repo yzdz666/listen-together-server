@@ -1,0 +1,7 @@
+node_modules/
+*.log
+web/downloads/*.apk
+web/downloads/*.zip
+# 管理后台只在部署环境使用，不进入公开仓库
+admin.js
+web/admin.html

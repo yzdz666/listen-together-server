@@ -1,0 +1,19 @@
+{
+  "name": "listen-together-server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "LX Music 一起听中继服务端",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "node test/test.js",
+    "test:web": "node test/web.test.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  },
+  "license": "Apache-2.0"
+}

@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>一起听 · 网页版</title>
+<style>
+  :root {
+    --bg: #0e1116;
+    --card: rgba(255, 255, 255, 0.06);
+    --card-solid: #171c24;
+    --line: rgba(255, 255, 255, 0.1);
+    --text: #e8ecf2;
+    --sub: #9aa4b2;
+    --primary: #4daf7c;
+    --primary-weak: rgba(77, 175, 124, 0.16);
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: radial-gradient(1200px 600px at 20% -10%, #1d2a33 0%, transparent 60%), var(--bg);
+    color: var(--text);
+    font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    display: flex;
+    justify-content: center;
+    min-height: 100%;
+  }
+  .app { width: 100%; max-width: 560px; padding: 20px 16px 28px; display: flex; flex-direction: column; gap: 14px; }
+  h1 { font-size: 17px; margin: 6px 0 2px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+  h1 small { font-size: 12px; color: var(--sub); font-weight: 400; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 16px; backdrop-filter: blur(12px); }
+  label { display: block; font-size: 12px; color: var(--sub); margin: 10px 0 6px; }
+  input {
+    width: 100%; padding: 11px 13px; border-radius: 11px; border: 1px solid var(--line);
+    background: rgba(0,0,0,.28); color: var(--text); font-size: 15px; outline: none;
+  }
+  input:focus { border-color: var(--primary); }
+  .row { display: flex; gap: 10px; }
+  .row > * { flex: 1; }
+  button {
+    appearance: none; border: 0; border-radius: 12px; padding: 12px 16px; font-size: 15px;
+    background: var(--primary-weak); color: #8fe0b3; font-weight: 600; cursor: pointer;
+  }
+  button.primary { background: var(--primary); color: #06210f; }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  button.ghost { background: transparent; border: 1px solid var(--line); color: var(--sub); font-weight: 500; }
+  .hint { font-size: 12px; color: var(--sub); margin-top: 8px; }
+  .err { color: #ff8080; font-size: 13px; min-height: 18px; }
+  .topbar { display: flex; align-items: center; gap: 10px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: #6b7280; flex: 0 0 auto; }
+  .dot.on { background: var(--primary); box-shadow: 0 0 0 4px var(--primary-weak); }
+  .dot.warn { background: #e0b341; }
+  .grow { flex: 1; min-width: 0; }
+  .code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 22px; letter-spacing: 3px; font-weight: 700; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+  .chip { font-size: 12px; padding: 5px 10px; border-radius: 999px; background: rgba(255,255,255,.07); color: var(--text); }
+  .chip.host { background: var(--primary-weak); color: #8fe0b3; }
+  .chip.off { opacity: .4; }
+  .np { display: flex; gap: 12px; align-items: center; }
+  .cover { width: 56px; height: 56px; border-radius: 10px; background: linear-gradient(135deg, #2b3644, #1a212b); flex: 0 0 auto; object-fit: cover; }
+  .np-title { font-size: 15px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .np-sub { font-size: 12px; color: var(--sub); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .np-lyric { margin-top: 10px; font-size: 14px; line-height: 1.6; min-height: 22px; color: var(--fg); text-align: center; transition: opacity .2s; }
+  .np-lyric.dim { color: var(--sub); }
+  .np-quality { display: inline-block; margin-left: 6px; padding: 1px 6px; border-radius: 8px; font-size: 10px; background: var(--chip); color: var(--sub); vertical-align: 1px; }
+  .bar { height: 4px; border-radius: 2px; background: rgba(255,255,255,.12); margin-top: 12px; overflow: hidden; }
+  .bar > i { display: block; height: 100%; width: 0; background: var(--primary); transition: width .3s linear; }
+  .time { display: flex; justify-content: space-between; font-size: 11px; color: var(--sub); margin-top: 6px; font-variant-numeric: tabular-nums; }
+  .chat { flex: 1; min-height: 160px; max-height: 42vh; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 2px; }
+  .msg { max-width: 86%; font-size: 14px; }
+  .msg .who { font-size: 11px; color: var(--sub); margin-bottom: 2px; }
+  .msg .bubble { background: rgba(255,255,255,.07); padding: 8px 11px; border-radius: 10px; word-break: break-word; white-space: pre-wrap; }
+  .msg.me { align-self: flex-end; text-align: right; }
+  .msg.me .bubble { background: var(--primary-weak); }
+  .msg.sys { align-self: center; max-width: 100%; color: var(--sub); font-size: 12px; text-align: center; }
+  .sendbar { display: flex; gap: 8px; margin-top: 10px; }
+  .sendbar input { flex: 1; }
+  .hidden { display: none !important; }
+  .foot { text-align: center; font-size: 12px; color: var(--sub); opacity: .7; margin-top: 4px; }
+  .audioRow { display: flex; align-items: center; gap: 10px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
+  .audioRow button { padding: 8px 12px; font-size: 13px; border-radius: 10px; white-space: nowrap; }
+  .vol { flex: 1; display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .vol input { width: 100%; accent-color: var(--primary); }
+  .vol span { font-size: 12px; color: var(--sub); white-space: nowrap; }
+  .audioTip { font-size: 12px; color: var(--sub); margin-top: 8px; line-height: 1.5; }
+  .audioTip.warn { color: #e0b341; }
+  .audioTip.err { color: #ff8080; }
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>一起听 <small>网页版</small><span class="grow"></span><span class="dot" id="dot"></span><span id="status" style="font-size:12px;color:var(--sub)">未连接</span></h1>
+
+  <!-- 入口 -->
+  <section class="card" id="entry">
+    <label>服务器地址</label>
+    <input id="server" placeholder="wss://example.com 或 ws://192.168.1.10:23333" />
+    <label>昵称</label>
+    <input id="nickname" maxlength="20" placeholder="给自己起个名字" />
+    <div class="row">
+      <div>
+        <label>房间码（加入时填）</label>
+        <input id="code" maxlength="6" placeholder="6 位房间码" style="text-transform:uppercase" />
+      </div>
+      <div>
+        <label>房间密码（可选）</label>
+        <input id="password" type="password" maxlength="32" placeholder="没有就留空" />
+      </div>
+    </div>
+    <div class="err" id="err"></div>
+    <div class="row" style="margin-top:6px">
+      <button class="primary" id="btnJoin">加入房间</button>
+      <button id="btnCreate">创建房间</button>
+    </div>
+    <p class="hint">网页端作为成员参与：可以直接听房主正在播放的歌，进度、切歌、暂停都与手机同步；切歌和进度由房主控制。刷新页面会用上次的身份自动回到房间。</p>
+  </section>
+
+  <!-- 房间 -->
+  <section class="card hidden" id="room">
+    <div class="topbar">
+      <div class="grow">
+        <div style="font-size:12px;color:var(--sub)">房间码</div>
+        <div class="code" id="roomCode">------</div>
+      </div>
+      <button class="ghost" id="btnCopy">复制</button>
+      <button class="ghost" id="btnLeave">退出</button>
+    </div>
+    <div class="chips" id="members"></div>
+  </section>
+
+  <section class="card hidden" id="playing">
+    <div class="np">
+      <img class="cover" id="cover" alt="" />
+      <div class="grow">
+        <div class="np-title"><span id="npTitle">等待播放</span><span class="np-quality hidden" id="npQuality"></span></div>
+        <div class="np-sub" id="npSub">房间里有人播放歌曲后，这里会同步显示</div>
+      </div>
+    </div>
+    <div class="np-lyric dim" id="npLyric"></div>
+    <div class="bar"><i id="progress"></i></div>
+    <div class="time"><span id="now">00:00</span><span id="dur">00:00</span></div>
+    <div class="audioRow">
+      <button class="primary" id="btnAudio">▶ 同步收听</button>
+      <div class="vol">
+        <span id="volIcon">🔊</span>
+        <input type="range" id="volume" min="0" max="100" value="80" />
+      </div>
+    </div>
+    <div class="audioTip" id="audioTip"></div>
+    <audio id="audio" preload="auto" playsinline></audio>
+  </section>
+
+  <section class="card hidden" id="chatCard" style="display:flex;flex-direction:column">
+    <div class="chat" id="chat"></div>
+    <div class="sendbar">
+      <input id="chatInput" maxlength="500" placeholder="说点什么…" />
+      <button class="primary" id="btnSend">发送</button>
+    </div>
+  </section>
+
+  <div class="foot">LX Music · 一起听 · 二改 月下独酌 QQ 3139606844</div>
+</div>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id) }
+  var LS_KEY = 'lx_lt_web'
+  var state = { ws: null, room: null, selfId: '', token: '', code: '', nickname: '', server: '', password: '', timer: 0, clock: 0, reconnect: 0, manualClose: false, audioSrc: '', audioUnlocked: false, audioError: '', lyric: null, lyricLines: null, lyricIndex: -1 }
+  var audio = document.getElementById('audio')
+
+  function fmt(t) {
+    t = Math.max(0, Math.floor(t || 0))
+    var m = Math.floor(t / 60), s = t % 60
+    return (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s
+  }
+  function save() {
+    try {
+      localStorage.setItem(LS_KEY, JSON.stringify({ server: state.server, nickname: state.nickname, code: state.room && state.room.code || '', token: state.token, selfId: state.selfId }))
+    } catch (e) {}
+  }
+  function load() {
+    try { return JSON.parse(localStorage.getItem(LS_KEY) || '{}') } catch (e) { return {} }
+  }
+  function setStatus(text, cls) {
+    $('status').textContent = text
+    $('dot').className = 'dot' + (cls ? ' ' + cls : '')
+  }
+  function show(id, on) { $(id).classList.toggle('hidden', !on) }
+
+  function defaultServer() {
+    var proto = location.protocol === 'https:' ? 'wss:' : 'ws:'
+    return proto + '//' + location.host
+  }
+
+  // 页面被单独部署时，可以通过 ?server=wss://xxx 指定中继地址
+  var query = (function () {
+    try { return new URLSearchParams(location.search) } catch (e) { return { get: function () { return '' } } }
+  })()
+  var sharecode = query.get('sharecode') || ''
+
+  function connect(cb) {
+    if (state.ws && state.ws.readyState === 1) { cb(); return }
+    var url = (state.server || query.get('server') || query.get('ws') || defaultServer()).trim()
+    if (!/^wss?:\/\//i.test(url)) {
+      url = url.replace(/^https?:\/\//i, function (m) { return m.toLowerCase() === 'https://' ? 'wss://' : 'ws://' })
+      if (!/^wss?:\/\//i.test(url)) url = 'ws://' + url
+    }
+    url = url.replace(/\/+$/, '')
+    if (sharecode && url.indexOf(location.host) >= 0) {
+      url += (url.indexOf('?') >= 0 ? '&' : '?') + 'sharecode=' + encodeURIComponent(sharecode)
+    }
+    setStatus('连接中…', 'warn')
+    var ws
+    try { ws = new WebSocket(url) } catch (e) { setStatus('地址无效', ''); showErr('地址无效：' + url); return }
+    state.ws = ws
+    ws.onopen = function () {
+      state.reconnect = 0
+      setStatus('已连接', 'on')
+      cb()
+      startPing()
+    }
+    ws.onmessage = function (ev) { handle(ev.data) }
+    ws.onclose = function () {
+      stopPing()
+      if (state.manualClose) return
+      setStatus('连接断开', '')
+      if (state.token && state.room && state.reconnect < 6) {
+        state.reconnect++
+        setTimeout(function () { tryRejoin() }, Math.min(1000 * state.reconnect, 8000))
+      }
+    }
+    ws.onerror = function () { setStatus('连接失败', '') }
+  }
+
+  function showErr(msg) { $('err').textContent = msg || '' }
+
+  function send(obj) {
+    if (!state.ws || state.ws.readyState !== 1) return false
+    state.ws.send(JSON.stringify(obj))
+    return true
+  }
+
+  function startPing() {
+    stopPing()
+    state.timer = setInterval(function () { send({ type: 'ping' }) }, 15000)
+  }
+  function stopPing() { if (state.timer) { clearInterval(state.timer); state.timer = 0 } }
+
+  function clientId() {
+    var saved = load()
+    if (saved.selfId) return saved.selfId
+    return 'web_' + Math.random().toString(36).slice(2, 10)
+  }
+
+  function doCreate() {
+    showErr('')
+    state.nickname = $('nickname').value.trim()
+    state.server = $('server').value.trim()
+    state.password = $('password').value
+    if (!state.nickname) { showErr('先填个昵称'); return }
+    setBusy(true)
+    connect(function () {
+      send({ type: 'create', clientId: state.selfId || (state.selfId = clientId()), nickname: state.nickname, password: state.password })
+    })
+  }
+
+  function doJoin() {
+    showErr('')
+    state.nickname = $('nickname').value.trim()
+    state.server = $('server').value.trim()
+    state.password = $('password').value
+    state.code = $('code').value.trim().toUpperCase()
+    if (!state.nickname) { showErr('先填个昵称'); return }
+    if (!/^[A-Z0-9]{6}$/.test(state.code)) { showErr('房间码是 6 位字母数字'); return }
+    setBusy(true)
+    connect(function () {
+      send({ type: 'join', clientId: state.selfId || (state.selfId = clientId()), nickname: state.nickname, code: state.code, password: state.password })
+    })
+  }
+
+  function tryRejoin() {
+    if (!state.room) return
+    connect(function () {
+      send({ type: 'join', clientId: state.selfId, nickname: state.nickname, code: state.room.code, password: state.password, token: state.token })
+    })
+  }
+
+  function setBusy(busy) {
+    $('btnJoin').disabled = busy
+    $('btnCreate').disabled = busy
+  }
+
+  function handle(raw) {
+    var msg
+    try { msg = JSON.parse(raw) } catch (e) { return }
+    switch (msg.type) {
+      case 'room':
+        state.room = msg.room
+        state.selfId = msg.selfId || state.selfId
+        state.token = msg.token || state.token
+        state.lyric = msg.room.lyric || null
+        parseLyric()
+        enterRoom()
+        break
+      case 'members':
+        if (state.room) { state.room.members = msg.members; state.room.hostId = msg.hostId }
+        renderMembers()
+        break
+      case 'state':
+        if (state.room) state.room.state = msg.state
+        renderPlaying()
+        break
+      case 'lyric':
+        state.lyric = msg.lyric
+        parseLyric()
+        renderLyric(true)
+        break
+      case 'chat':
+        appendChat(msg.message)
+        break
+      case 'error':
+        setBusy(false)
+        showErr(errorText(msg.code))
+        if (msg.code === 'room_not_found' || msg.code === 'bad_request') {
+          leaveUI()
+        }
+        break
+      case 'kicked':
+        showErr('你已被移出房间')
+        leaveUI()
+        break
+    }
+  }
+
+  function errorText(code) {
+    var map = {
+      bad_request: '参数不正确',
+      room_not_found: '房间不存在或已关闭',
+      wrong_password: '房间密码错误',
+      room_full: '房间人数已满',
+      already_in_room: '你已经在房间里了',
+      not_host: '只有房主可以操作',
+      rate_limited: '操作太快了，稍后再试',
+      network_error: '网络异常',
+      server_error: '服务端异常'
+    }
+    return map[code] || ('出错了：' + code)
+  }
+
+  function enterRoom() {
+    setBusy(false)
+    show('entry', false); show('room', true); show('playing', true); show('chatCard', true)
+    $('roomCode').textContent = state.room.code
+    renderMembers()
+    renderPlaying()
+    save()
+  }
+
+  function leaveUI() {
+    state.room = null; state.token = ''
+    state.audioSrc = ''; state.audioUnlocked = false; state.audioError = ''
+    state.lyric = null; state.lyricLines = null; state.lyricIndex = -1
+    stopAudio()
+    audio.removeAttribute('src')
+    setAudioTip('')
+    $('npLyric').textContent = ''
+    $('npLyric').className = 'np-lyric dim'
+    show('entry', true); show('room', false); show('playing', false); show('chatCard', false)
+    $('chat').innerHTML = ''
+    setBusy(false)
+  }
+
+  function renderMembers() {
+    var room = state.room
+    if (!room) return
+    var html = ''
+    ;(room.members || []).forEach(function (m) {
+      var cls = 'chip' + (m.isHost ? ' host' : '') + (m.online ? '' : ' off')
+      html += '<span class="' + cls + '">' + (m.isHost ? '房主 · ' : '') + esc(m.nickname) + (m.id === state.selfId ? '（我）' : '') + '</span>'
+    })
+    $('members').innerHTML = html
+  }
+
+  // ---- 歌词同步 ----
+  function parseLyric() {
+    state.lyricLines = null
+    state.lyricIndex = -1
+    var lyric = state.lyric
+    if (!lyric || !lyric.lrc) return
+    var lines = []
+    lyric.lrc.split(/\r?\n/).forEach(function (line) {
+      var m = line.match(/^\s*\[(\d{1,3}):(\d{1,2})(?:[.:](\d{1,3}))?\](.*)$/)
+      if (!m) return
+      var frac = m[3] ? Number((m[3] + '000').slice(0, 3)) / 1000 : 0
+      var time = Number(m[1]) * 60 + Number(m[2]) + frac
+      var text = m[4].trim()
+      if (text) lines.push({ time: time, text: text })
+    })
+    lines.sort(function (a, b) { return a.time - b.time })
+    state.lyricLines = lines
+  }
+
+  function renderLyric() {
+    var el = $('npLyric')
+    if (!el) return
+    var lines = state.lyricLines
+    if (!lines || !lines.length) {
+      if (el.textContent !== '') { el.textContent = ''; el.className = 'np-lyric dim' }
+      state.lyricIndex = -1
+      return
+    }
+    var pos = currentPosition()
+    var index = -1
+    for (var i = 0; i < lines.length; i++) {
+      if (lines[i].time <= pos) index = i
+      else break
+    }
+    if (index !== state.lyricIndex) {
+      state.lyricIndex = index
+      if (index > -1) {
+        el.textContent = lines[index].text
+        el.className = 'np-lyric'
+      } else {
+        el.textContent = ''
+        el.className = 'np-lyric dim'
+      }
+    }
+  }
+
+  function renderPlaying() {
+    var s = state.room && state.room.state
+    if (!s || !s.music) {
+      $('npTitle').textContent = '等待播放'
+      $('npSub').textContent = '房间里有人播放歌曲后，这里会同步显示'
+      $('cover').removeAttribute('src')
+      $('progress').style.width = '0%'
+      $('now').textContent = '00:00'
+      $('dur').textContent = '00:00'
+      return
+    }
+    $('npTitle').textContent = s.music.name || '未知歌曲'
+    $('npSub').textContent = (s.music.singer || '') + (s.isPlaying ? ' · 播放中' : ' · 已暂停')
+    var qEl = $('npQuality')
+    if (s.quality) {
+      qEl.textContent = s.quality === 'flac24bit' ? 'FLAC 24bit' : s.quality.toUpperCase()
+      qEl.className = 'np-quality'
+    } else {
+      qEl.textContent = ''
+      qEl.className = 'np-quality hidden'
+    }
+    if (s.music.picUrl) $('cover').src = s.music.picUrl
+    else $('cover').removeAttribute('src')
+    syncAudio()
+    tick()
+  }
+
+  // ---- 音频同步 ----
+  function setAudioTip(text, cls) {
+    var el = $('audioTip')
+    if (el.textContent !== text) el.textContent = text
+    var next = 'audioTip' + (cls ? ' ' + cls : '')
+    if (el.className !== next) el.className = next
+  }
+
+  function targetPos() {
+    return currentPosition()
+  }
+
+  function seekToTarget() {
+    var target = targetPos()
+    if (!isFinite(target)) return
+    try {
+      if (Math.abs(audio.currentTime - target) > 0.8) audio.currentTime = target
+    } catch (e) {}
+  }
+
+  function stopAudio() {
+    if (!audio.paused) audio.pause()
+  }
+
+  function syncAudio() {
+    var s = state.room && state.room.state
+    var music = s && s.music
+    if (!music) {
+      stopAudio()
+      setAudioTip('')
+      return
+    }
+    if (!music.url) {
+      stopAudio()
+      $('btnAudio').textContent = '仅同步进度'
+      $('btnAudio').disabled = true
+      setAudioTip('房主播放的是本地文件，或这个音源不提供直链，网页端只能同步进度，声音请在 App 里听。', 'warn')
+      return
+    }
+    // https 页面加载 http 音频会被浏览器当作混合内容拦截
+    if (location.protocol === 'https:' && /^http:/i.test(music.url)) {
+      stopAudio()
+      state.audioSrc = ''
+      $('btnAudio').textContent = '仅同步进度'
+      $('btnAudio').disabled = true
+      setAudioTip('这个音源只给了 http 链接，浏览器不允许 https 页面播放，请用 App 收听；进度仍会同步。', 'warn')
+      return
+    }
+    $('btnAudio').disabled = false
+
+    if (state.audioSrc !== music.url) {
+      state.audioSrc = music.url
+      state.audioError = ''
+      audio.src = music.url
+      audio.load()
+      // 元数据到位后再对齐一次（此时 currentTime 才可写）
+      audio.addEventListener('loadedmetadata', function () { seekToTarget() }, { once: true })
+    }
+    if (state.audioError) {
+      $('btnAudio').textContent = '无法播放'
+      return
+    }
+
+    audio.playbackRate = Math.min(4, Math.max(0.25, s.playRate || 1))
+    if (audio.readyState >= 1 && Math.abs(audio.currentTime - targetPos()) > 2.5) seekToTarget()
+
+    if (s.isPlaying) {
+      if (state.audioUnlocked && audio.paused) {
+        var p = audio.play()
+        if (p && p.catch) p.catch(function () { needTap() })
+      }
+    } else if (!audio.paused) {
+      audio.pause()
+    }
+
+    if (state.audioUnlocked && !audio.paused) {
+      $('btnAudio').textContent = '♪ 同步中'
+      setAudioTip('已和房主同步播放，声音只在你自己的设备上。', '')
+    } else if (state.audioUnlocked) {
+      $('btnAudio').textContent = '▶ 继续收听'
+      setAudioTip('点击「继续收听」恢复声音，切歌会自动跟上房主。', '')
+    } else {
+      $('btnAudio').textContent = '▶ 同步收听'
+      setAudioTip('浏览器要求先点一下才能出声：点「同步收听」，之后切歌、暂停都会自动跟随房主。', '')
+    }
+  }
+
+  function needTap() {
+    state.audioUnlocked = false
+    $('btnAudio').textContent = '▶ 点击收听'
+    setAudioTip('浏览器拦截了自动播放，点一下「点击收听」即可继续。', 'warn')
+  }
+
+  function startAudio() {
+    var s = state.room && state.room.state
+    if (!s || !s.music) {
+      setAudioTip('房主还没开始播放。', 'warn')
+      return
+    }
+    if (!s.music.url) {
+      setAudioTip('当前歌曲没有可用的直链，等房主切歌后再试。', 'warn')
+      return
+    }
+    state.audioUnlocked = true
+    state.audioError = ''
+    if (state.audioSrc !== s.music.url) {
+      state.audioSrc = s.music.url
+      audio.src = s.music.url
+      audio.load()
+    }
+    audio.volume = Number($('volume').value || 80) / 100
+    if (audio.readyState >= 1) seekToTarget()
+    var p = audio.play()
+    if (p && p.catch) p.catch(function () { needTap() })
+    setTimeout(syncAudio, 300)
+  }
+
+  audio.addEventListener('error', function () {
+    if (!state.audioSrc) return
+    state.audioError = 'error'
+    $('btnAudio').textContent = '无法播放'
+    setAudioTip('这个音源不允许网页直接播放（可能限会员、限设备或已过期），请用 App 收听；进度仍会同步。', 'err')
+  })
+  audio.addEventListener('loadedmetadata', function () {
+    seekToTarget()
+  })
+  audio.addEventListener('playing', function () {
+    $('btnAudio').textContent = '♪ 同步中'
+    setAudioTip('已和房主同步播放，声音只在你自己的设备上。', '')
+  })
+
+  function currentPosition() {
+    var s = state.room && state.room.state
+    if (!s || !s.music) return 0
+    if (!s.isPlaying) return s.position || 0
+    var elapsed = (Date.now() - (s.sentAt || Date.now())) / 1000
+    return Math.max(0, (s.position || 0) + elapsed * (s.playRate || 1))
+  }
+
+  function tick() {
+    var s = state.room && state.room.state
+    if (!s || !s.music) return
+    var pos = currentPosition()
+    // 能真正播放时以音频元素为准，避免每 4 秒广播带来的小跳
+    if (state.audioUnlocked && !state.audioError && audio.src && audio.readyState >= 2) pos = audio.currentTime
+    var dur = s.music.interval ? toSeconds(s.music.interval) : (audio.duration || 0)
+    $('now').textContent = fmt(pos)
+    $('dur').textContent = dur ? fmt(dur) : '--:--'
+    $('progress').style.width = dur ? Math.min(100, pos / dur * 100) + '%' : '0%'
+    renderLyric()
+  }
+
+  function toSeconds(text) {
+    var parts = String(text).split(':')
+    if (parts.length < 2) return 0
+    return parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10)
+  }
+
+  function appendChat(m) {
+    if (!m) return
+    var el = document.createElement('div')
+    if (m.type === 'system') {
+      el.className = 'msg sys'
+      el.textContent = m.text
+    } else {
+      var mine = m.senderId && m.senderId === state.selfId
+      el.className = 'msg' + (mine ? ' me' : '')
+      el.innerHTML = '<div class="who">' + esc(m.senderName || '') + '</div><div class="bubble">' + esc(m.text || '') + '</div>'
+    }
+    $('chat').appendChild(el)
+    $('chat').scrollTop = $('chat').scrollHeight
+  }
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+    })
+  }
+
+  function doSend() {
+    var input = $('chatInput')
+    var text = input.value.trim()
+    if (!text) return
+    if (!send({ type: 'chat', text: text })) { showErr('连接已断开，正在重连…'); return }
+    input.value = ''
+  }
+
+  function doLeave() {
+    state.manualClose = true
+    send({ type: 'leave' })
+    if (state.ws) state.ws.close()
+    state.manualClose = false
+    state.token = ''
+    leaveUI()
+    save()
+  }
+
+  // init
+  var saved = load()
+  state.server = saved.server || query.get('server') || query.get('ws') || ''
+  state.nickname = saved.nickname || query.get('nickname') || ''
+  $('server').value = state.server || defaultServer()
+  $('nickname').value = state.nickname
+  if (saved.code) $('code').value = saved.code
+  try {
+    var vol = Number(localStorage.getItem('lx_lt_volume'))
+    if (isFinite(vol) && vol >= 0 && vol <= 100) {
+      $('volume').value = String(vol)
+      audio.volume = vol / 100
+      $('volIcon').textContent = vol === 0 ? '🔇' : '🔊'
+    } else {
+      audio.volume = 0.8
+    }
+  } catch (e) { audio.volume = 0.8 }
+
+  $('btnCreate').addEventListener('click', doCreate)
+  $('btnJoin').addEventListener('click', doJoin)
+  $('btnLeave').addEventListener('click', doLeave)
+  $('btnSend').addEventListener('click', doSend)
+  $('chatInput').addEventListener('keydown', function (e) { if (e.key === 'Enter') doSend() })
+  $('btnAudio').addEventListener('click', startAudio)
+  $('volume').addEventListener('input', function () {
+    var value = Number(this.value)
+    audio.volume = value / 100
+    $('volIcon').textContent = value === 0 ? '🔇' : '🔊'
+    try { localStorage.setItem('lx_lt_volume', String(value)) } catch (e) {}
+  })
+  $('btnCopy').addEventListener('click', function () {
+    if (!state.room) return
+    var text = state.room.code
+    if (navigator.clipboard) navigator.clipboard.writeText(text)
+    $('btnCopy').textContent = '已复制'
+    setTimeout(function () { $('btnCopy').textContent = '复制' }, 1200)
+  })
+
+  state.clock = setInterval(tick, 500)
+
+  // 刷新后自动回到上次的房间
+  if (saved.token && saved.code) {
+    state.token = saved.token
+    state.code = saved.code
+    state.selfId = saved.selfId || ''
+    if (state.nickname) {
+      connect(function () {
+        send({ type: 'join', clientId: state.selfId || clientId(), nickname: state.nickname, code: saved.code, token: saved.token })
+      })
+    }
+  }
+})()
+</script>
+</body>
+</html>

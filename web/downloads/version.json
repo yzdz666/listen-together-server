@@ -1,0 +1,41 @@
+{
+  "version": "1.18.0",
+  "versionCode": 100,
+  "desc": "新增：完整音质体系，支持 128K / 192K / 320K / FLAC / FLAC 24bit / Hi-Res / Atmos / Atmos+ / Master，并新增对应彩色徽章\n新增：安卓原生锁屏显示——设置项「锁屏显示」，一键直达 MIUI/HyperOS 锁屏显示权限页，锁屏歌词/播放控制\n修复：桌面歌词多行模式不逐字、翻译不显示——原生自绘歌词行，歌词逐字染色 + 翻译小字同行显示\n新增：全平台逐字歌词兜底（无逐字歌词的音源按行时间自动生成），并统一歌词时间轴精度\n升级：音效系统新增人声增强 / 超重低音 / 3D 环绕 / 现场 / 电子 / 摇滚 / 民谣 / 古典 / 爵士 / 影院 / 音乐厅等 12 组预设，新增响度增强与可重置均衡器\n修复：设置 Master 却显示 FLAC 的徽标问题，回退档位时不再错误显示\n继承：一键下载歌单、本地音乐独立页面、WebDAV 修复、赞助码居中",
+  "history": [
+    {
+      "version": "1.17.0",
+      "desc": "新增：侧边栏「本地音乐」入口，一键打开本地音乐歌单\n新增：音质可选 Master（母带级），播放优先尝试 Master → Hi-Res → FLAC → 320K\n新增：桌面歌词逐字卡拉OK动画（洛雪逐字/A2 逐字格式，已唱高亮、未唱暗色）\n修复：App 歌词页显示 <0,200> 之类原始逐字标签的问题\n增强：锁屏歌词兜底——当前歌词行写入媒体卡片，锁屏可见\n修复：WebDAV 兼容 Cloudreve（pan.cdn.ad 实测通过，测试连接/备份/恢复正常）\n修复：赞助码弹窗显示不完整的问题\n音源测试新增 Master 档位实测"
+    },
+    {
+      "version": "1.16.0",
+      "desc": "- 新增自定义音效系统（EQ/预设）\n- 音源测试增强\n- 本地音乐扫描、下载设置\n- WebDAV 兼容 Cloudreve 修复"
+    },
+    {
+      "version": "1.15.0",
+      "desc": "- 关于页新增引用项目致谢\n- 赞助码、免责声明\n- 桌面歌词与逐字歌词增强"
+    },
+    {
+      "version": "1.14.0",
+      "desc": "- 侧边栏新增「一起听」入口\n- 新增小米背屏 / iQOO 原子岛兼容版（backscreen）\n- 新增 WebDAV 歌单/设置备份"
+    },
+    {
+      "version": "1.13.1",
+      "desc": "- 一起听稳定性修复"
+    },
+    {
+      "version": "1.13.0",
+      "desc": "- 一起听（局域网/公网）功能\n- 网页端房间"
+    }
+  ],
+  "download": {
+    "arm64-v8a": "https://3000-cc948fce4bbd4341ae6f442f5b6a003e.e2b.gz2.sandbox.cloudstudio.club/downloads/LXMusic-Mod-v1.18.0-arm64-v8a.apk?sharecode=MKPWEVLBUS",
+    "universal": "https://3000-cc948fce4bbd4341ae6f442f5b6a003e.e2b.gz2.sandbox.cloudstudio.club/downloads/LXMusic-Mod-v1.18.0-universal.apk?sharecode=MKPWEVLBUS",
+    "backscreen": "https://3000-cc948fce4bbd4341ae6f442f5b6a003e.e2b.gz2.sandbox.cloudstudio.club/downloads/LXMusic-Mod-v1.18.0-backscreen-arm64-v8a.apk?sharecode=MKPWEVLBUS"
+  },
+  "source": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lx-music-mod-src-v1.18.0.zip?sharecode=MKPWEVLBUS",
+  "repos": {
+    "app": "https://github.com/yzdz666/lx-music-mobile-mod",
+    "server": "https://github.com/yzdz666/listen-together-server"
+  }
+}
