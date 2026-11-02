@@ -54,16 +54,14 @@
   </section>
 
   <section class="card">
-    <h2>本版更新（v1.18.0）</h2>
-    <ul>
-      <li>新增：完整音质体系，支持 128K / 192K / 320K / FLAC / FLAC 24bit / Hi-Res / Atmos / Atmos+ / Master，并新增对应彩色徽章</li>
-      <li>新增：安卓原生锁屏显示——设置项「锁屏显示」，一键直达 MIUI/HyperOS 锁屏显示权限页，锁屏歌词/播放控制</li>
-      <li>修复：桌面歌词多行模式不逐字、翻译不显示——原生自绘歌词行，歌词逐字染色 + 翻译小字同行显示</li>
-      <li>新增：全平台逐字歌词兜底（无逐字歌词的音源按行时间自动生成），并统一歌词时间轴精度</li>
-      <li>升级：音效系统新增人声增强 / 超重低音 / 3D 环绕 / 现场 / 电子 / 摇滚 / 民谣 / 古典 / 爵士 / 影院 / 音乐厅等 12 组预设，新增响度增强与可重置均衡器</li>
-      <li>修复：设置 Master 却显示 FLAC 的徽标问题，回退档位时不再错误显示</li>
-      <li>继承：一键下载歌单、本地音乐独立页面、WebDAV 修复、赞助码居中</li>
+    <h2>本版更新（<span id="logVer">v1.18.0</span>）</h2>
+    <ul id="logList">
+      <li>正在从服务器加载更新日志…</li>
     </ul>
+    <div id="historyBox" style="display:none">
+      <p class="muted" style="margin-top:14px">历史版本：</p>
+      <div id="historyList"></div>
+    </div>
     <p class="muted">历史版本说明见源码包内 doc/mod-features.md。</p>
   </section>
 
@@ -74,7 +72,7 @@
       <li>App 源码：<a href="https://github.com/yzdz666/lx-music-mobile-mod" style="color:var(--primary)">yzdz666/lx-music-mobile-mod</a></li>
       <li>服务端 / 网页版源码：<a href="https://github.com/yzdz666/listen-together-server" style="color:var(--primary)">yzdz666/listen-together-server</a></li>
     </ul>
-    <a class="btn ghost" href="downloads/lx-music-mod-src-v1.18.0.zip">下载二改源码（打包版）<small>含 listen-together-server 与全部二改代码（不含签名密钥）</small></a>
+    <a class="btn ghost" id="btnSrc" href="downloads/lx-music-mod-src-v1.18.0.zip">下载二改源码（打包版）<small>含 listen-together-server 与全部二改代码（不含签名密钥）</small></a>
     <a class="btn ghost" href="admin.html">管理后台<small>上传安装包 / 源码 / 发布更新日志（需管理密码）</small></a>
     <ul>
       <li>自建房间服务器：<code>cd listen-together-server && npm install && node index.js</code></li>
@@ -103,13 +101,55 @@
   fetch('downloads/version.json' + qs).then(r => r.json()).then(info => {
     if (!info || !info.version) return
     document.getElementById('ver').textContent = 'v' + info.version
+    document.getElementById('logVer').textContent = 'v' + info.version
     if (info.date) document.getElementById('date').textContent = info.date
+
+    // 安装包链接：完全以 version.json 为准
     if (info.download && typeof info.download === 'object') {
       if (info.download['arm64-v8a']) document.getElementById('btnArm').href = info.download['arm64-v8a']
       if (info.download.universal) document.getElementById('btnUni').href = info.download.universal
+      if (info.download.backscreen) document.getElementById('btnBackscreen').href = info.download.backscreen
+    }
+    if (info.source) {
+      // 兼容后台只填文件名的情况：补全为 downloads/ 相对路径
+      document.getElementById('btnSrc').href = /^https?:\/\//.test(info.source) ? info.source : 'downloads/' + info.source.replace(/^\/+/, '')
+    }
+
+    // 更新日志：支持 desc 字符串或 notes 数组
+    var lines = []
+    if (Array.isArray(info.desc)) lines = info.desc
+    else if (typeof info.desc === 'string') lines = info.desc.split('\n')
+    else if (Array.isArray(info.notes)) lines = info.notes
+    var logList = document.getElementById('logList')
+    logList.innerHTML = ''
+    lines.map(s => String(s).trim()).filter(Boolean).forEach(function (line) {
+      var li = document.createElement('li')
+      li.textContent = line
+      logList.appendChild(li)
+    })
+    if (!logList.children.length) logList.innerHTML = '<li>暂无更新说明</li>'
+
+    // 历史版本
+    if (Array.isArray(info.history) && info.history.length) {
+      var box = document.getElementById('historyBox')
+      var list = document.getElementById('historyList')
+      box.style.display = ''
+      info.history.forEach(function (h) {
+        var p = document.createElement('p')
+        p.className = 'muted'
+        p.style.margin = '6px 0'
+        var b = document.createElement('b')
+        b.style.color = 'var(--fg)'
+        b.textContent = 'v' + h.version
+        p.appendChild(b)
+        var text = (typeof h.desc === 'string' ? h.desc : (h.desc || []).join('；'))
+        p.appendChild(document.createTextNode('　' + text))
+        list.appendChild(p)
+      })
     }
   }).catch(() => {
     // 拉取版本信息失败时保留页面上的默认链接（脚本已补 sharecode），不影响手动下载
+    document.getElementById('logList').innerHTML = '<li>更新日志加载失败，请刷新重试（下载链接不受影响）</li>'
   })
 </script>
 </body>

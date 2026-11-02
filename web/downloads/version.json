@@ -1,8 +1,16 @@
 {
-  "version": "1.18.0",
-  "versionCode": 100,
-  "desc": "新增：完整音质体系，支持 128K / 192K / 320K / FLAC / FLAC 24bit / Hi-Res / Atmos / Atmos+ / Master，并新增对应彩色徽章\n新增：安卓原生锁屏显示——设置项「锁屏显示」，一键直达 MIUI/HyperOS 锁屏显示权限页，锁屏歌词/播放控制\n修复：桌面歌词多行模式不逐字、翻译不显示——原生自绘歌词行，歌词逐字染色 + 翻译小字同行显示\n新增：全平台逐字歌词兜底（无逐字歌词的音源按行时间自动生成），并统一歌词时间轴精度\n升级：音效系统新增人声增强 / 超重低音 / 3D 环绕 / 现场 / 电子 / 摇滚 / 民谣 / 古典 / 爵士 / 影院 / 音乐厅等 12 组预设，新增响度增强与可重置均衡器\n修复：设置 Master 却显示 FLAC 的徽标问题，回退档位时不再错误显示\n继承：一键下载歌单、本地音乐独立页面、WebDAV 修复、赞助码居中",
+  "version": "1.20.0",
+  "versionCode": 102,
+  "desc": "新增：网易云账号体系——侧边栏「我的音乐」，支持扫码登录 / Cookie 登录，每日推荐、关注歌手、音乐云盘、我的歌单、我喜欢的音乐、红心与关注操作全部可用；登录态仅存本机\n新增：一起听同步音频直链——房主把播放地址一起广播，成员本机没有该音源也能播；状态广播 4s→2s，播放/暂停/切歌/拖动即时同步\n新增：一起听房间消息通知——其他成员发言以系统通知弹出（独立高优先级渠道，带声音震动，点击回到 App）\n修复：ColorOS 锁屏歌词仍只有普通媒体卡——补齐 MediaBrowserService 声明（新增 LxMediaBrowserService，把 TrackPlayer 会话 token 交给系统）、appCategory=audio、com.oplus.music.support_lyric；并修正依赖补丁 updateTitles 未接入 lyricInfo 的问题（此前因锚点冲突漏插，导致系统收不到歌词数据）\n新增：平台设置支持网易云扫码登录，卡片直接显示昵称 / VIP；QQ 音乐、酷狗保留 Cookie 方案\n说明：ColorOS 锁屏大歌词页属 SystemUI 白名单能力，第三方无 Root/LSPosed 无法绕过；未放行时可用通知栏 / 灵动岛逐行歌词兜底",
   "history": [
+    {
+      "version": "1.19.0",
+      "desc": "修复：ColorOS / OPlus 锁屏歌词不显示——按官方 lyricInfo 协议补齐 lyricType / noLyric / provider / trackKey，时间轴统一为绝对毫秒，逐字歌词写入 rawLyric（支持扫光），翻译写入 translationLyric；AndroidManifest 增加 OPLUS_MEDIA_HISTORY 声明（缺这条会被系统过滤）；封面加载、切歌不再丢歌词/串歌\n修复：播放中弹出「Critical Error Occurred」白屏——原生异常页中文化并可直接复制堆栈；修复打开悬浮窗权限未加 FLAG_ACTIVITY_NEW_TASK、分享时 Activity 为空 NPE；歌词 payload 限制 64KB 并给所有 setMetadata 加保护，避免 Binder 事务超限崩溃\n新增：下载设置支持「并发下载数量」1-5 与「下载目录」选择（内置目录浏览器，选择前做可写探测，可一键恢复默认）\n新增：侧边栏「在线歌单」——粘贴网易云 / QQ 音乐 / 酷狗歌单链接或 wy:ID / tx:ID / kg:ID 直接打开，播放全部、收藏、下载可用，并记录最近打开\n新增：侧边栏「平台设置」——保存网易云 / QQ / 酷狗 Cookie，网易云私密歌单自动带 MUSIC_U，仅存本机\n优化：移除每行歌词改写 artist 的兜底（污染通知栏且造成高频 metadata 重建）\n"
+    },
+    {
+      "version": "1.18.0",
+      "desc": "新增：完整音质体系，支持 128K / 192K / 320K / FLAC / FLAC 24bit / Hi-Res / Atmos / Atmos+ / Master，并新增对应彩色徽章\n新增：安卓原生锁屏显示——设置项「锁屏显示」，一键直达 MIUI/HyperOS 锁屏显示权限页，锁屏歌词/播放控制\n修复：桌面歌词多行模式不逐字、翻译不显示——原生自绘歌词行，歌词逐字染色 + 翻译小字同行显示\n新增：全平台逐字歌词兜底（无逐字歌词的音源按行时间自动生成），并统一歌词时间轴精度\n升级：音效系统新增人声增强 / 超重低音 / 3D 环绕 / 现场 / 电子 / 摇滚 / 民谣 / 古典 / 爵士 / 影院 / 音乐厅等 12 组预设，新增响度增强与可重置均衡器\n修复：设置 Master 却显示 FLAC 的徽标问题，回退档位时不再错误显示\n继承：一键下载歌单、本地音乐独立页面、WebDAV 修复、赞助码居中"
+    },
     {
       "version": "1.17.0",
       "desc": "新增：侧边栏「本地音乐」入口，一键打开本地音乐歌单\n新增：音质可选 Master（母带级），播放优先尝试 Master → Hi-Res → FLAC → 320K\n新增：桌面歌词逐字卡拉OK动画（洛雪逐字/A2 逐字格式，已唱高亮、未唱暗色）\n修复：App 歌词页显示 <0,200> 之类原始逐字标签的问题\n增强：锁屏歌词兜底——当前歌词行写入媒体卡片，锁屏可见\n修复：WebDAV 兼容 Cloudreve（pan.cdn.ad 实测通过，测试连接/备份/恢复正常）\n修复：赞助码弹窗显示不完整的问题\n音源测试新增 Master 档位实测"
@@ -29,11 +37,11 @@
     }
   ],
   "download": {
-    "arm64-v8a": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/LXMusic-Mod-v1.18.0-arm64-v8a.apk?sharecode=MKPWEVLBUS",
-    "universal": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/LXMusic-Mod-v1.18.0-universal.apk?sharecode=MKPWEVLBUS",
-    "backscreen": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/LXMusic-Mod-v1.18.0-backscreen-arm64-v8a.apk?sharecode=MKPWEVLBUS"
+    "arm64-v8a": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/LXMusic-Mod-v1.20.0-arm64-v8a.apk?sharecode=MKPWEVLBUS",
+    "universal": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/LXMusic-Mod-v1.20.0-universal.apk?sharecode=MKPWEVLBUS",
+    "backscreen": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/LXMusic-Mod-v1.20.0-backscreen-arm64-v8a.apk?sharecode=MKPWEVLBUS"
   },
-  "source": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lx-music-mod-src-v1.18.0.zip?sharecode=MKPWEVLBUS",
+  "source": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lx-music-mod-src-v1.20.0.zip?sharecode=MKPWEVLBUS",
   "repos": {
     "app": "https://github.com/yzdz666/lx-music-mobile-mod",
     "server": "https://github.com/yzdz666/listen-together-server"
