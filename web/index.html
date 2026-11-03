@@ -496,6 +496,17 @@
     if (!audio.paused) audio.pause()
   }
 
+  // https 页面直接播 http 音频会被浏览器拦截（混合内容），改走同源代理转发
+  function audioSrcUrl(raw) {
+    if (!raw) return ''
+    if (location.protocol === 'https:' && /^http:/i.test(raw)) {
+      var p = '/audioproxy?url=' + encodeURIComponent(raw)
+      if (sharecode) p += '&sharecode=' + encodeURIComponent(sharecode)
+      return p
+    }
+    return raw
+  }
+
   function syncAudio() {
     var s = state.room && state.room.state
     var music = s && s.music
@@ -511,21 +522,13 @@
       setAudioTip('房主播放的是本地文件，或这个音源不提供直链，网页端只能同步进度，声音请在 App 里听。', 'warn')
       return
     }
-    // https 页面加载 http 音频会被浏览器当作混合内容拦截
-    if (location.protocol === 'https:' && /^http:/i.test(music.url)) {
-      stopAudio()
-      state.audioSrc = ''
-      $('btnAudio').textContent = '仅同步进度'
-      $('btnAudio').disabled = true
-      setAudioTip('这个音源只给了 http 链接，浏览器不允许 https 页面播放，请用 App 收听；进度仍会同步。', 'warn')
-      return
-    }
     $('btnAudio').disabled = false
 
-    if (state.audioSrc !== music.url) {
-      state.audioSrc = music.url
+    var src = audioSrcUrl(music.url)
+    if (state.audioSrc !== src) {
+      state.audioSrc = src
       state.audioError = ''
-      audio.src = music.url
+      audio.src = src
       audio.load()
       // 元数据到位后再对齐一次（此时 currentTime 才可写）
       audio.addEventListener('loadedmetadata', function () { seekToTarget() }, { once: true })
@@ -577,9 +580,10 @@
     }
     state.audioUnlocked = true
     state.audioError = ''
-    if (state.audioSrc !== s.music.url) {
-      state.audioSrc = s.music.url
-      audio.src = s.music.url
+    var src = audioSrcUrl(s.music.url)
+    if (state.audioSrc !== src) {
+      state.audioSrc = src
+      audio.src = src
       audio.load()
     }
     audio.volume = Number($('volume').value || 80) / 100

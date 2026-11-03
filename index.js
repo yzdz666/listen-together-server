@@ -8,6 +8,7 @@
  */
 
 const http = require('http')
+const https = require('https')
 const os = require('os')
 const fs = require('fs')
 const path = require('path')
@@ -859,6 +860,13 @@ const server = http.createServer((req, res) => {
     if (serveStatic(req, res, rel)) return
   }
 
+  // 音频代理：https 页面不能直接播 http 音频（浏览器混合内容拦截），同源转发解决；
+  // 支持 Range 透传，网页版拖动进度 / 断点续播不受影响
+  if (pathname === '/audioproxy') {
+    handleAudioProxy(req, res, url)
+    return
+  }
+
   if (serveStatic(req, res, pathname)) return
 
   res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' })
@@ -875,6 +883,53 @@ const server = http.createServer((req, res) => {
 })
 
 const wss = new WebSocketServer({ server, maxPayload: MAX_MESSAGE_SIZE })
+
+/**
+ * 音频代理：/audioproxy?url=<encoded>
+ * 把音源返回的 http(s) 音频从本服务同源转发给网页版，
+ * 避免 https 页面播 http 音频被浏览器拦截。Range 请求原样透传。
+ */
+function handleAudioProxy(req, res, requestUrl) {
+  const raw = String(requestUrl.searchParams.get('url') || '').trim()
+  let first
+  try { first = new URL(raw) } catch { first = null }
+  if (!first || !/^https?:$/.test(first.protocol)) {
+    res.writeHead(400, { 'Content-Type': 'text/plain; charset=utf-8' })
+    res.end('bad url')
+    return
+  }
+  const headers = {}
+  // Range / Referer 透传：部分音源校验 Range 起点，音乐直链也可能要求带 Referer
+  if (req.headers.range) headers.Range = req.headers.range
+  headers['User-Agent'] = req.headers['user-agent'] || 'lx-music-mobile/1.22.17'
+  // 音源直链普遍 301/302 跳 CDN，最多跟 3 跳
+  const fetchOnce = (target, redirects) => {
+    const client = target.protocol === 'https:' ? https : http
+    const upstream = client.get(target, { headers }, (up) => {
+      if ([301, 302, 303, 307, 308].includes(up.statusCode || 0) && up.headers.location && redirects < 3) {
+        up.resume()
+        try {
+          const next = new URL(up.headers.location, target)
+          if (!/^https?:$/.test(next.protocol)) throw new Error('bad redirect')
+          return fetchOnce(next, redirects + 1)
+        } catch {
+          if (!res.headersSent) res.writeHead(502, { 'Content-Type': 'text/plain; charset=utf-8' })
+          return res.end('bad redirect')
+        }
+      }
+      const pass = ['content-type', 'content-length', 'content-range', 'accept-ranges', 'last-modified', 'etag']
+      const out = { 'Access-Control-Allow-Origin': '*', 'Cache-Control': 'no-store' }
+      for (const k of pass) if (up.headers[k] != null) out[k] = up.headers[k]
+      res.writeHead(up.statusCode || 502, out)
+      up.pipe(res)
+    })
+    upstream.on('error', () => {
+      if (!res.headersSent) res.writeHead(502, { 'Content-Type': 'text/plain; charset=utf-8' })
+      res.end('upstream error')
+    })
+  }
+  fetchOnce(first, 0)
+}
 
 wss.on('connection', (ws) => {
   const client = {
