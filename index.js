@@ -727,12 +727,14 @@ function serveStatic(req, res, urlPath) {
   if (!stat.isFile()) return false
 
   const ext = path.extname(target).toLowerCase()
+  // html 与 json（version.json 等）不允许缓存：发布后页面必须立刻看到新版本与时间；apk/zip 等静态资产可缓存 1 小时
+  const cacheable = ext === '.apk' || ext === '.zip' || ext === '.png' || ext === '.jpg' || ext === '.ico' || ext === '.mp3'
   const headers = {
     'Content-Type': MIME[ext] || 'application/octet-stream',
     'Access-Control-Allow-Origin': '*',
     // 支持 Range：浏览器播放 / 拖动音频进度需要
     'Accept-Ranges': 'bytes',
-    'Cache-Control': ext === '.html' ? 'no-store' : 'public, max-age=3600',
+    'Cache-Control': cacheable ? 'public, max-age=3600' : 'no-store',
   }
 
   const range = req.headers.range

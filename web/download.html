@@ -98,7 +98,8 @@
   Array.prototype.forEach.call(document.querySelectorAll('a[href^="/"], a[href^="downloads/"]'), function (a) {
     if (a.getAttribute('href').indexOf('sharecode') === -1) a.setAttribute('href', a.getAttribute('href') + qs)
   })
-  fetch('downloads/version.json' + qs).then(r => r.json()).then(info => {
+  // version.json 加时间戳穿透缓存：确保发布后立刻看到新版本与更新时间（服务端也已对该文件返回 no-store）
+  fetch('downloads/version.json' + qs + (qs ? '&' : '?') + '_=' + Date.now()).then(r => r.json()).then(info => {
     if (!info || !info.version) return
     document.getElementById('ver').textContent = 'v' + info.version
     document.getElementById('logVer').textContent = 'v' + info.version

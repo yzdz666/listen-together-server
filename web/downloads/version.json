@@ -1,8 +1,12 @@
 {
-  "version": "1.22.16",
-  "versionCode": 121,
-  "desc": "v1.22.16\n- 播放音质修复：优先播放音质按设置真实请求各平台音源（Master/Atmos 不再被音源声明拦截降级为 24bit），请求失败自动按「声明档位→歌曲档位→128K」逐级回退，播放日志标记 [quality]\n- 下载修复：全局音质直接按设置档位下载，失败自动降级，文件按实际音质标注\n- 新增：设置 → 软件更新 → 「检查更新」按钮，一键检查并主动升级",
+  "version": "1.22.17",
+  "versionCode": 122,
+  "desc": "v1.22.17\n- 下载弹窗固定展示 8 档音质（128K 标准 → 臻品母带Master），自定义音源没声明母带也能选母带下载；选到不支持的档位自动按回退链降级，并以实际音质写入下载列表\n- 音质名称统一为中文全名：播放页徽标、下载列表、音源测试、一起听全部一致（Hi-Res 无损 / 臻品全景声 Atmos / 臻品母带Master 等）\n- 修复侧边栏云盘入口的页面映射缺口；新增 MediaStore 原生模块（全设备音频索引）\n- 发布站：更新时间随每次发布实时刷新；修复源码链接 downloads/downloads 双路径",
   "history": [
+    {
+      "version": "1.22.16",
+      "desc": "v1.22.16\n- 播放音质修复：优先播放音质按设置真实请求各平台音源（Master/Atmos 不再被音源声明拦截降级为 24bit），请求失败自动按「声明档位→歌曲档位→128K」逐级回退，播放日志标记 [quality]\n- 下载修复：全局音质直接按设置档位下载，失败自动降级，文件按实际音质标注\n- 新增：设置 → 软件更新 → 「检查更新」按钮，一键检查并主动升级"
+    },
     {
       "version": "1.22.15",
       "desc": "# 月下独酌版 v1.22.15\n\n## 音质体系完善\n\n- **优先播放的音质**改为固定 8 档并带中文名，与 lxx 对齐：\n  128K 标准 → 320K 高品质 → FLAC 无损 → 24bit 无损 → Hi-Res 无损 → 臻品全景声 Atmos → 臻品全景声 Atmos+ → 臻品母带 Master\n- **不再出现 192K**（该档仅个别平台提供，统一从播放/下载/音源测试的可选列表移除）\n- **下载音质（指定模式）与下载弹窗**同步使用中文全名，一眼看懂在下什么档\n- **全平台 master 透传已验证**：wy / tx / kg / kw / mg / bd 六个平台的取链接都会把你选的档位原样传给音源脚本——只要音源声明支持母带，设置选了就真实请求母带；音源没有的档位自动降到它声明的最高档\n\n## 验证方法\n\n1. 设置 → 优先播放的音质勾选「臻品母带 Master」→ 播放页顶部徽标应显示 Master\n2. 播放页下载弹窗应列出「臻品全景声 Atmos」「臻品母带 Master」等档位\n3. 设置 → 音源测试，实测各平台最高档\n\n**安装**：签名与之前版本一致，直接覆盖安装。"
@@ -78,21 +82,17 @@
     {
       "version": "1.20.0",
       "desc": "新增：网易云账号体系——侧边栏「我的音乐」，支持扫码登录 / Cookie 登录，每日推荐、关注歌手、音乐云盘、我的歌单、我喜欢的音乐、红心与关注操作全部可用；登录态仅存本机\n新增：一起听同步音频直链——房主把播放地址一起广播，成员本机没有该音源也能播；状态广播 4s→2s，播放/暂停/切歌/拖动即时同步\n新增：一起听房间消息通知——其他成员发言以系统通知弹出（独立高优先级渠道，带声音震动，点击回到 App）\n修复：ColorOS 锁屏歌词仍只有普通媒体卡——补齐 MediaBrowserService 声明（新增 LxMediaBrowserService，把 TrackPlayer 会话 token 交给系统）、appCategory=audio、com.oplus.music.support_lyric；并修正依赖补丁 updateTitles 未接入 lyricInfo 的问题（此前因锚点冲突漏插，导致系统收不到歌词数据）\n新增：平台设置支持网易云扫码登录，卡片直接显示昵称 / VIP；QQ 音乐、酷狗保留 Cookie 方案\n说明：ColorOS 锁屏大歌词页属 SystemUI 白名单能力，第三方无 Root/LSPosed 无法绕过；未放行时可用通知栏 / 灵动岛逐行歌词兜底"
-    },
-    {
-      "version": "1.19.0",
-      "desc": "修复：ColorOS / OPlus 锁屏歌词不显示——按官方 lyricInfo 协议补齐 lyricType / noLyric / provider / trackKey，时间轴统一为绝对毫秒，逐字歌词写入 rawLyric（支持扫光），翻译写入 translationLyric；AndroidManifest 增加 OPLUS_MEDIA_HISTORY 声明（缺这条会被系统过滤）；封面加载、切歌不再丢歌词/串歌\n修复：播放中弹出「Critical Error Occurred」白屏——原生异常页中文化并可直接复制堆栈；修复打开悬浮窗权限未加 FLAG_ACTIVITY_NEW_TASK、分享时 Activity 为空 NPE；歌词 payload 限制 64KB 并给所有 setMetadata 加保护，避免 Binder 事务超限崩溃\n新增：下载设置支持「并发下载数量」1-5 与「下载目录」选择（内置目录浏览器，选择前做可写探测，可一键恢复默认）\n新增：侧边栏「在线歌单」——粘贴网易云 / QQ 音乐 / 酷狗歌单链接或 wy:ID / tx:ID / kg:ID 直接打开，播放全部、收藏、下载可用，并记录最近打开\n新增：侧边栏「平台设置」——保存网易云 / QQ / 酷狗 Cookie，网易云私密歌单自动带 MUSIC_U，仅存本机\n优化：移除每行歌词改写 artist 的兜底（污染通知栏且造成高频 metadata 重建）\n"
     }
   ],
   "download": {
-    "arm64-v8a": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/LXMusic-Mod-v1.22.16-arm64-v8a.apk?sharecode=MKPWEVLBUS",
-    "universal": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/LXMusic-Mod-v1.22.16-universal.apk?sharecode=MKPWEVLBUS",
-    "backscreen": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/LXMusic-Mod-v1.22.16-backscreen-arm64-v8a.apk?sharecode=MKPWEVLBUS"
+    "arm64-v8a": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/LXMusic-Mod-v1.22.17-arm64-v8a.apk?sharecode=MKPWEVLBUS",
+    "universal": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/LXMusic-Mod-v1.22.17-universal.apk?sharecode=MKPWEVLBUS",
+    "backscreen": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/LXMusic-Mod-v1.22.17-backscreen-arm64-v8a.apk?sharecode=MKPWEVLBUS"
   },
-  "source": "lx-music-mod-src-v1.22.16.zip",
+  "source": "lx-music-mod-src-v1.22.17.zip",
   "repos": {
     "app": "https://github.com/yzdz666/lx-music-mobile-mod",
     "server": "https://github.com/yzdz666/listen-together-server"
   },
-  "date": "2026-11-03 13:56"
+  "date": "2026-11-03 14:41"
 }
