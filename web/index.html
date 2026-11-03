@@ -62,7 +62,7 @@
   .np-sub { font-size: 12px; color: var(--sub); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .np-lyric { margin-top: 10px; font-size: 14px; line-height: 1.6; min-height: 22px; color: var(--fg); text-align: center; transition: opacity .2s; }
   .np-lyric.dim { color: var(--sub); }
-  .np-quality { display: inline-block; margin-left: 6px; padding: 1px 6px; border-radius: 8px; font-size: 10px; background: var(--chip); color: var(--sub); vertical-align: 1px; }
+  .np-quality { display: inline-block; margin-left: 6px; padding: 1px 7px; border-radius: 8px; font-size: 10px; font-weight: 600; border: 1px solid transparent; vertical-align: 1px; white-space: nowrap; }
   .bar { height: 4px; border-radius: 2px; background: rgba(255,255,255,.12); margin-top: 12px; overflow: hidden; }
   .bar > i { display: block; height: 100%; width: 0; background: var(--primary); transition: width .3s linear; }
   .time { display: flex; justify-content: space-between; font-size: 11px; color: var(--sub); margin-top: 6px; font-variant-numeric: tabular-nums; }
@@ -164,6 +164,35 @@
 <script>
 (function () {
   var $ = function (id) { return document.getElementById(id) }
+  // 音质中文全名与分级配色，与 App 端 src/config/quality.ts（1.22.17）保持一致
+  var QUALITY_LABELS = {
+    '128k': '128K 标准',
+    '192k': '192K',
+    '320k': '320K 高品质',
+    flac: 'FLAC 无损',
+    flac24bit: '24bit 无损',
+    hires: 'Hi-Res 无损',
+    atmos: '臻品全景声 Atmos',
+    atmos_plus: '臻品全景声 Atmos+',
+    master: '臻品母带Master',
+    ape: 'APE 无损',
+    wav: 'WAV 无损',
+    local: '本地',
+  }
+  var QUALITY_COLORS = {
+    '128k': '#8A94A6',
+    '192k': '#8A94A6',
+    '320k': '#2F7CF6',
+    flac: '#12A150',
+    flac24bit: '#0E9F6E',
+    hires: '#C08A00',
+    atmos: '#8B5CF6',
+    atmos_plus: '#7C3AED',
+    master: '#E5484D',
+    ape: '#12A150',
+    wav: '#12A150',
+    local: '#8A94A6',
+  }
   var LS_KEY = 'lx_lt_web'
   var state = { ws: null, room: null, selfId: '', token: '', code: '', nickname: '', server: '', password: '', timer: 0, clock: 0, reconnect: 0, manualClose: false, audioSrc: '', audioUnlocked: false, audioError: '', lyric: null, lyricLines: null, lyricIndex: -1 }
   var audio = document.getElementById('audio')
@@ -439,10 +468,26 @@
       return
     }
     $('npTitle').textContent = s.music.name || '未知歌曲'
-    $('npSub').textContent = (s.music.singer || '') + (s.isPlaying ? ' · 播放中' : ' · 已暂停')
+    $('npTitle').title = s.music.name || ''
+    // 副标题：歌手 · 专辑 · 播放状态（专辑之前漏显示）
+    var subParts = []
+    if (s.music.singer) subParts.push(s.music.singer)
+    if (s.music.album && s.music.album !== s.music.name) subParts.push(s.music.album)
+    subParts.push(s.isPlaying ? '播放中' : '已暂停')
+    var subText = subParts.join(' · ')
+    $('npSub').textContent = subText
+    $('npSub').title = subText
+    // 音质徽标：与 App 端 1.22.17 同源的中文全名 + 分级配色 + 音源后缀（臻品母带Master · KG）
     var qEl = $('npQuality')
-    if (s.quality) {
-      qEl.textContent = s.quality === 'flac24bit' ? 'FLAC 24bit' : s.quality.toUpperCase()
+    var qLabel = QUALITY_LABELS[s.quality]
+    var qColor = QUALITY_COLORS[s.quality]
+    if (s.quality && qLabel) {
+      qEl.textContent = (s.music.source === 'local' || s.quality === 'local')
+        ? qLabel
+        : qLabel + ' · ' + String(s.music.source || '').toUpperCase()
+      qEl.style.color = qColor || 'var(--sub)'
+      qEl.style.borderColor = (qColor || '#9aa4b2') + '66'
+      qEl.style.background = (qColor || '#9aa4b2') + '1a'
       qEl.className = 'np-quality'
     } else {
       qEl.textContent = ''

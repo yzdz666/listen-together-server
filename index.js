@@ -24,7 +24,9 @@ const MAX_ROOM_MESSAGES = 50
 const MAX_LYRIC_LENGTH = 64 * 1024
 const MAX_TRANSLATION_LENGTH = 32 * 1024
 /** 允许的房间统一音质 */
-const QUALITIES = ['128k', '192k', '320k', 'flac', 'flac24bit', 'ape', 'wav']
+// 音质白名单与 App 端 QUALITY_ORDER 对齐（1.22.17：补 hires / atmos / atmos_plus / master，
+// 之前母带、全景声会被这里清洗成 null，网页版永远看不到音质徽标）
+const QUALITIES = ['128k', '192k', '320k', 'flac', 'flac24bit', 'hires', 'atmos', 'atmos_plus', 'master', 'ape', 'wav']
 
 /** 成员掉线后保留身份的时长，方便客户端自动重连恢复 */
 const MEMBER_OFFLINE_TTL = 90 * 1000
@@ -39,7 +41,8 @@ const RATE_LIMIT_WINDOW = 10 * 1000
 const RATE_LIMIT_COUNT = 120
 
 const CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
-const SOURCES = ['kw', 'kg', 'tx', 'wy', 'mg', 'local']
+// 与 App 端六平台对齐（bd 百度之前缺失，房主播百度源整条状态会被拒掉）
+const SOURCES = ['kw', 'kg', 'tx', 'wy', 'mg', 'bd', 'local']
 const WS_OPEN = 1
 
 /** @type {Map<string, Room>} */
