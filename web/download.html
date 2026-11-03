@@ -46,7 +46,7 @@
 
   <section class="card">
     <h2>安装包</h2>
-    <p class="ver">最新版本 <b id="ver">v1.18.0</b> · 更新于 <span id="date">2026-11-02</span></p>
+    <p class="ver">最新版本 <b id="ver">v1.18.0</b> · 更新于 <span id="date">加载中…</span></p>
     <a class="btn primary" id="btnArm" href="downloads/LXMusic-Mod-v1.18.0-arm64-v8a.apk">下载安卓安装包（推荐）<small>arm64-v8a · 2016 年后的绝大多数手机</small></a>
     <a class="btn ghost" id="btnUni" href="downloads/LXMusic-Mod-v1.18.0-universal.apk">下载全架构安装包<small>universal · 兼容老旧设备 / 模拟器</small></a>
     <a class="btn ghost" id="btnBackscreen" href="downloads/LXMusic-Mod-v1.18.0-backscreen-arm64-v8a.apk">下载背屏 / 原子岛兼容版<small>小米背屏 · iQOO 原子随身听（包名白名单版，与正版汽水音乐不能共存）</small></a>
@@ -102,7 +102,8 @@
     if (!info || !info.version) return
     document.getElementById('ver').textContent = 'v' + info.version
     document.getElementById('logVer').textContent = 'v' + info.version
-    if (info.date) document.getElementById('date').textContent = info.date
+    // 更新时间：以 version.json 的 date 为准（服务端发布时自动写入），缺失时不再显示写死的日期
+    document.getElementById('date').textContent = info.date ? info.date : '—'
 
     // 安装包链接：完全以 version.json 为准
     if (info.download && typeof info.download === 'object') {
@@ -111,8 +112,14 @@
       if (info.download.backscreen) document.getElementById('btnBackscreen').href = info.download.backscreen
     }
     if (info.source) {
-      // 兼容后台只填文件名的情况：补全为 downloads/ 相对路径
-      document.getElementById('btnSrc').href = /^https?:\/\//.test(info.source) ? info.source : 'downloads/' + info.source.replace(/^\/+/, '')
+      // 兼容三种写法：完整 URL 原样；/downloads/xxx 或 downloads/xxx 去重复前缀；纯文件名补前缀
+      var src = info.source
+      if (/^https?:\/\//.test(src)) {
+        document.getElementById('btnSrc').href = src
+      } else {
+        src = src.replace(/^\/downloads\//, '').replace(/^downloads\//, '').replace(/^\/+/, '')
+        document.getElementById('btnSrc').href = 'downloads/' + src
+      }
     }
 
     // 更新日志：支持 desc 字符串或 notes 数组
