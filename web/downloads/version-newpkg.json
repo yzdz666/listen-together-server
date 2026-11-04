@@ -1,0 +1,41 @@
+{
+  "version": "1.22.27",
+  "versionCode": 132000,
+  "date": "2026-11-04",
+  "desc": "v1.22.27（新包名 com.lxmod.music）· 歌词里的 // 清理\n\n`//` 是 QQ 音乐（TME）翻译歌词里的占位符：这一行没有翻译时，正文就写 `//`。\n之前把翻译原样塞给渲染层，于是每句没翻译的歌词下面都多出一行 `//`。\n英文歌、日文歌最明显。\n\n现在 App 歌词页（竖屏/横屏/逐字）、桌面歌词、锁屏系统歌词、投屏、一起听、\n下载歌词导出，六个出口全部清掉占位行；QQ 歌词在拉取时也从源头过滤。\n\n顺手修：下载带翻译的歌词时，一半翻译行会丢。原因是代码里用带 g 的正则做 exec，\nlastIndex 残留导致每隔一行匹配失败。8 行歌词实测 8 行全保留（修复前只剩 4 行）。\n\nversionCode 132000，可直接覆盖 1.22.20 ~ 1.22.26。",
+  "history": [
+    {
+      "version": "1.22.26",
+      "desc": "WebDAV 云盘音乐播放修复：302 跳转不再丢认证、限流自动重试"
+    },
+    {
+      "version": "1.22.25",
+      "desc": "App 内歌词页逐字渲染重做；修自动滚动失效 / 逐字回跳 / 时间轴断裂"
+    },
+    {
+      "version": "1.22.24",
+      "desc": "桌面歌词翻译与逐字修复；修开关污染 / 空白 / 回调堆积"
+    },
+    {
+      "version": "1.22.23",
+      "desc": "桌面歌词恢复上游常驻行为；修「一直显示 LX Music ^-^」；在线更新双源回退"
+    },
+    {
+      "version": "1.22.22",
+      "desc": "修复「已安装更高版本」装不上：versionCode 统一为 版本号×1000"
+    },
+    {
+      "version": "1.22.21",
+      "desc": "桌面歌词修复（该版 versionCode 有误装不上）"
+    },
+    {
+      "version": "1.22.20",
+      "desc": "关歌词崩溃 / 退出崩溃 / 锁屏歌词失效修复；新增本地备份"
+    }
+  ],
+  "download": {
+    "arm64-v8a": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-v1.22.27-arm64-v8a.apk?sharecode=MKPWEVLBUS",
+    "universal": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-v1.22.27-universal.apk?sharecode=MKPWEVLBUS",
+    "backscreen": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-v1.22.27-backscreen-arm64-v8a.apk?sharecode=MKPWEVLBUS"
+  }
+}

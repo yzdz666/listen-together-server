@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>管理后台 · LX Music 二改</title>
+<style>
+  :root {
+    --bg: #f4f6f9; --card: #ffffff; --line: #e5e9f0;
+    --text: #1c2430; --muted: #7a8595;
+    --primary: #2f7cf6; --primary-dark: #1f5fd0;
+    --danger: #e5484d; --ok: #2e9e5b;
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg); color: var(--text); min-height: 100vh;
+    padding: 24px 16px 60px;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; }
+  h1 { font-size: 22px; margin-bottom: 4px; }
+  .sub { color: var(--muted); font-size: 13px; margin-bottom: 24px; }
+  .card {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 22px; margin-bottom: 18px;
+  }
+  .card h2 { font-size: 16px; margin-bottom: 14px; }
+  label { display: block; font-size: 13px; color: var(--muted); margin: 12px 0 5px; }
+  input, textarea {
+    width: 100%; padding: 10px 12px; font-size: 14px; color: var(--text);
+    border: 1px solid var(--line); border-radius: 8px; background: #fbfcfe;
+    font-family: inherit;
+  }
+  input:focus, textarea:focus { outline: 2px solid rgba(47,124,246,.25); border-color: var(--primary); }
+  textarea { resize: vertical; min-height: 110px; line-height: 1.6; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .row > * { flex: 1; min-width: 200px; }
+  button {
+    cursor: pointer; border: none; border-radius: 9px; font-size: 14px;
+    padding: 10px 18px; background: var(--primary); color: #fff; font-weight: 500;
+    transition: background .15s;
+  }
+  button:hover { background: var(--primary-dark); }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+  button.ghost { background: #eef2f8; color: var(--text); }
+  button.ghost:hover { background: #e2e9f2; }
+  button.danger { background: #fdecec; color: var(--danger); padding: 5px 12px; font-size: 12px; }
+  button.danger:hover { background: #f9dcdc; }
+  .btns { display: flex; gap: 10px; margin-top: 18px; align-items: center; flex-wrap: wrap; }
+  .msg { font-size: 13px; margin-top: 12px; min-height: 18px; }
+  .msg.ok { color: var(--ok); }
+  .msg.err { color: var(--danger); }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 9px 8px; border-bottom: 1px solid var(--line); }
+  th { color: var(--muted); font-weight: 500; font-size: 12px; }
+  td .name { word-break: break-all; }
+  .tag { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 20px; background: #eef4ff; color: var(--primary); margin-left: 6px; }
+  .dropzone {
+    border: 2px dashed var(--line); border-radius: 10px; padding: 28px 16px;
+    text-align: center; color: var(--muted); font-size: 13px; cursor: pointer;
+    transition: border-color .15s, background .15s;
+  }
+  .dropzone:hover, .dropzone.drag { border-color: var(--primary); background: #f5f9ff; }
+  .hidden { display: none; }
+  #logout { float: right; }
+  .ver-preview { font-size: 12px; color: var(--muted); margin-top: 10px; line-height: 1.8; }
+  .ver-preview code {
+    display: block; word-break: break-all; overflow-wrap: anywhere;
+    background: #f2f5fa; padding: 4px 8px; border-radius: 6px; margin: 3px 0; white-space: normal;
+  }
+  .card h2 .tag { word-break: break-all; overflow-wrap: anywhere; white-space: normal; max-width: 100%; margin: 4px 0 0; }
+  .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table { min-width: 540px; }
+  a { color: var(--primary); text-decoration: none; }
+  @media (max-width: 520px) {
+    body { padding: 14px 10px 40px; }
+    .card { padding: 16px 14px; }
+    .row > * { min-width: 100%; }
+    h1 { font-size: 19px; }
+    #logout { float: none; margin-bottom: 10px; }
+    td, th { padding: 8px 5px; }
+    button.danger { padding: 8px 12px; font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>管理后台</h1>
+  <p class="sub">LX Music 二改 · 下载站 / 更新源管理 <a href="download.html">← 返回下载页</a></p>
+
+  <!-- 登录 -->
+  <div class="card" id="loginCard">
+    <h2>登录</h2>
+    <label>管理密码</label>
+    <input type="password" id="pwd" placeholder="请输入管理密码" autocomplete="current-password">
+    <div class="btns">
+      <button id="loginBtn">登 录</button>
+      <span class="msg" id="loginMsg"></span>
+    </div>
+  </div>
+
+  <!-- 管理面板 -->
+  <div id="panel" class="hidden">
+    <div class="card">
+      <button class="ghost" id="logout">退出登录</button>
+      <h2>发布新版本</h2>
+      <div class="row">
+        <div>
+          <label>版本号（x.y.z）</label>
+          <input id="vVersion" placeholder="如 1.17.0">
+        </div>
+        <div>
+          <label>versionCode（整数）</label>
+          <input id="vCode" placeholder="如 98">
+        </div>
+      </div>
+      <label>更新日志（每行一条，发布新版本号时旧日志自动归档进「历史版本」）</label>
+      <textarea id="vDesc" placeholder="新增：xxx&#10;修复：xxx"></textarea>
+      <label>源码包链接（留空自动生成为 lx-music-mod-src-v&lt;版本&gt;.zip）</label>
+      <input id="vSource" placeholder="源码文件名（如 lx-music-mod-src-v1.22.16.zip）或完整 URL，留空自动生成">
+      <div class="ver-preview" id="dlPreview"></div>
+      <div class="btns">
+        <button id="saveVerBtn">保存并发布</button>
+        <button class="ghost" id="loadVerBtn">重新读取当前版本</button>
+        <span class="msg" id="verMsg"></span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>上传文件 <span class="tag">APK / ZIP / JSON，单个最大 300MB</span></h2>
+      <div class="dropzone" id="drop">
+        点击选择文件，或拖拽到此处<br>
+        <small>上传后保存在服务器 downloads 目录，即可通过下载页与 App 在线更新访问</small>
+      </div>
+      <input type="file" id="file" multiple accept=".apk,.zip,.json" class="hidden">
+      <div class="btns">
+        <button id="uploadBtn" disabled>开始上传</button>
+        <span class="msg" id="upMsg"></span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>已发布文件</h2>
+      <div class="table-scroll">
+      <table>
+        <thead><tr><th>文件名</th><th>大小</th><th>修改时间</th><th></th></tr></thead>
+        <tbody id="fileRows"><tr><td colspan="4" style="color:var(--muted)">加载中…</td></tr></tbody>
+      </table>
+      </div>
+      <div class="msg" id="fileMsg"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id)
+const tokenKey = 'lxmod_admin_token'
+const sharecode = new URLSearchParams(location.search).get('sharecode') || ''
+// 分享网关要求所有请求带 sharecode，同源 fetch 也要带上
+function withShare(path) {
+  if (!sharecode) return path
+  return path + (path.includes('?') ? '&' : '?') + 'sharecode=' + encodeURIComponent(sharecode)
+}
+
+const fmtSize = (n) => n > 1024*1024 ? (n/1024/1024).toFixed(1)+' MB' : (n/1024).toFixed(1)+' KB'
+const fmtTime = (ms) => new Date(ms).toLocaleString('zh-CN', { hour12: false })
+const msg = (id, text, ok) => { const el = $(id); el.textContent = text; el.className = 'msg ' + (ok ? 'ok' : 'err') }
+
+async function api(path, options = {}) {
+  const token = localStorage.getItem(tokenKey) || ''
+  // 网关可能剥离 Authorization 头，token 同时放 query 兜底
+  const authPath = token ? withShare(path + (path.includes('?') ? '&' : '?') + 'token=' + token) : withShare(path)
+  const res = await fetch(authPath, {
+    ...options,
+    headers: { ...(options.headers || {}), ...(token ? { Authorization: 'Bearer ' + token } : {}) },
+  })
+  const data = await res.json().catch(() => ({}))
+  if (res.status === 401) { showLogin(); throw new Error(data.error || 'unauthorized') }
+  if (!res.ok || data.ok === false) throw new Error(data.error || ('HTTP ' + res.status))
+  return data
+}
+
+function showLogin() {
+  $('loginCard').classList.remove('hidden')
+  $('panel').classList.add('hidden')
+}
+function showPanel() {
+  $('loginCard').classList.add('hidden')
+  $('panel').classList.remove('hidden')
+  refreshFiles()
+  loadVersion()
+}
+
+// ---- 登录 ----
+async function doLogin() {
+  try {
+    const data = await fetch(withShare('/api/admin/login'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: $('pwd').value }),
+    }).then(r => r.json())
+    if (!data.ok) throw new Error(data.error === 'wrong_password' ? '密码错误' : data.error)
+    localStorage.setItem(tokenKey, data.token)
+    showPanel()
+  } catch (err) {
+    msg('loginMsg', '登录失败：' + err.message, false)
+  }
+}
+$('loginBtn').onclick = doLogin
+$('pwd').addEventListener('keydown', (e) => { if (e.key === 'Enter') doLogin() })
+$('logout').onclick = () => { localStorage.removeItem(tokenKey); showLogin() }
+
+// ---- 版本 ----
+function dlPreview() {
+  const v = $('vVersion').value.trim() || '<版本号>'
+  const base = location.origin + '/downloads/'
+  const q = sharecode ? '?sharecode=' + sharecode : ''
+  $('dlPreview').innerHTML =
+    '保存后将自动生成以下下载链接（文件需已上传）：<br>' +
+    'arm64-v8a：<code>' + base + 'LXMusic-Mod-v' + v + '-arm64-v8a.apk' + q + '</code><br>' +
+    'universal：<code>' + base + 'LXMusic-Mod-v' + v + '-universal.apk' + q + '</code><br>' +
+    'backscreen：<code>' + base + 'LXMusic-Mod-v' + v + '-backscreen-arm64-v8a.apk' + q + '</code>'
+}
+$('vVersion').addEventListener('input', dlPreview)
+
+async function loadVersion() {
+  try {
+    const { version } = await api('/api/admin/version')
+    $('vVersion').value = version.version || ''
+    $('vCode').value = version.versionCode || ''
+    $('vDesc').value = version.desc || ''
+    $('vSource').value = version.source || ''
+    dlPreview()
+  } catch (err) { msg('verMsg', '读取失败：' + err.message, false) }
+}
+$('loadVerBtn').onclick = loadVersion
+
+$('saveVerBtn').onclick = async () => {
+  const btn = $('saveVerBtn')
+  btn.disabled = true
+  try {
+    const data = await api('/api/admin/version', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        version: $('vVersion').value.trim(),
+        versionCode: $('vCode').value.trim(),
+        desc: $('vDesc').value,
+        source: $('vSource').value.trim(),
+        sharecode,
+        origin: location.origin,
+      }),
+    })
+    msg('verMsg', '已发布 v' + data.version.version + '，App 在线更新与下载页即刻生效', true)
+    loadVersion()
+  } catch (err) {
+    msg('verMsg', '发布失败：' + err.message, false)
+  } finally {
+    btn.disabled = false
+  }
+}
+
+// ---- 上传 ----
+let pickedFiles = []
+$('drop').onclick = () => $('file').click()
+$('drop').addEventListener('dragover', (e) => { e.preventDefault(); $('drop').classList.add('drag') })
+$('drop').addEventListener('dragleave', () => $('drop').classList.remove('drag'))
+$('drop').addEventListener('drop', (e) => {
+  e.preventDefault()
+  $('drop').classList.remove('drag')
+  pickedFiles = [...e.dataTransfer.files]
+  $('upMsg').textContent = '已选择 ' + pickedFiles.length + ' 个文件'
+  $('uploadBtn').disabled = pickedFiles.length === 0
+})
+$('file').addEventListener('change', () => {
+  pickedFiles = [...$('file').files]
+  $('upMsg').textContent = '已选择 ' + pickedFiles.length + ' 个文件'
+  $('uploadBtn').disabled = pickedFiles.length === 0
+})
+
+$('uploadBtn').onclick = async () => {
+  if (!pickedFiles.length) return
+  const btn = $('uploadBtn')
+  btn.disabled = true
+  const form = new FormData()
+  for (const f of pickedFiles) form.append('files', f, f.name)
+  try {
+    msg('upMsg', '上传中（大文件可能需要一些时间）…', true)
+    const data = await api('/api/admin/upload', { method: 'POST', body: form })
+    msg('upMsg', '上传成功：' + data.saved.map(f => f.name + '（' + fmtSize(f.size) + '）').join('、'), true)
+    pickedFiles = []
+    $('file').value = ''
+    renderFiles(data.files)
+  } catch (err) {
+    msg('upMsg', '上传失败：' + err.message, false)
+  } finally {
+    btn.disabled = pickedFiles.length > 0
+  }
+}
+
+// ---- 文件列表 ----
+function renderFiles(files) {
+  const tbody = $('fileRows')
+  if (!files || !files.length) {
+    tbody.innerHTML = '<tr><td colspan="4" style="color:var(--muted)">暂无文件</td></tr>'
+    return
+  }
+  tbody.innerHTML = files.map(f => {
+    const q = sharecode ? '?sharecode=' + sharecode : ''
+    const link = location.origin + '/downloads/' + encodeURIComponent(f.name) + q
+    return '<tr>' +
+      '<td class="name">' + f.name + '</td>' +
+      '<td>' + fmtSize(f.size) + '</td>' +
+      '<td>' + fmtTime(f.modifiedAt) + '</td>' +
+      '<td style="white-space:nowrap">' +
+        '<a href="' + link + '" target="_blank">链接</a> ' +
+        '<button class="danger" data-name="' + f.name + '">删除</button>' +
+      '</td></tr>'
+  }).join('')
+  tbody.querySelectorAll('button.danger').forEach(btn => {
+    btn.onclick = () => delFile(btn.dataset.name)
+  })
+}
+async function refreshFiles() {
+  try {
+    const data = await api('/api/admin/files')
+    renderFiles(data.files)
+  } catch (err) {
+    $('fileRows').innerHTML = '<tr><td colspan="4" style="color:var(--danger)">加载失败：' + err.message + '</td></tr>'
+  }
+}
+async function delFile(name) {
+  if (!confirm('确认删除 ' + name + '？下载页与在线更新将无法再访问该文件。')) return
+  try {
+    const data = await api('/api/admin/delete', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name }),
+    })
+    msg('fileMsg', '已删除 ' + name, true)
+    renderFiles(data.files)
+  } catch (err) {
+    msg('fileMsg', '删除失败：' + err.message, false)
+  }
+}
+
+// 自动登录
+if (localStorage.getItem(tokenKey)) {
+  api('/api/admin/files').then((data) => {
+    showPanel()
+    renderFiles(data.files)
+  }).catch(() => {})
+}
+</script>
+</body>
+</html>

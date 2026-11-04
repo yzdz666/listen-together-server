@@ -2,6 +2,5 @@ node_modules/
 *.log
 web/downloads/*.apk
 web/downloads/*.zip
-# 管理后台只在部署环境使用，不进入公开仓库
-admin.js
-web/admin.html
+# 管理密码改由环境变量 ADMIN_PASSWORD 注入（未配置时后台自动关闭），
+# 因此 admin.js / web/admin.html 可以安全入库，保证 clone 后服务能直接启动。

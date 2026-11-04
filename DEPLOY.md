@@ -52,10 +52,31 @@ curl http://127.0.0.1:23333/api/room/AB12CD
 ```bash
 cd listen-together-server
 npm install
-PORT=23333 npm start
+PORT=23333 ADMIN_PASSWORD='换成你自己的强密码' npm start
 ```
 
 前台运行，关掉终端就停。适合临时用。
+
+> `ADMIN_PASSWORD` 是下载站管理后台（`/admin.html`：上传安装包、编辑 version.json）的登录密码。
+> **不设置时管理接口整体返回 503（`admin_not_configured`）**，一起听与网页版不受影响。
+> 服务端不再内置默认密码——公开仓库里人尽皆知的密码，等于没有密码。
+
+## 1.1 管理后台
+
+```bash
+PORT=23333 ADMIN_PASSWORD='你的密码' node index.js
+# 浏览器打开 http://<ip>:23333/admin.html
+```
+
+| 接口 | 用途 |
+| --- | --- |
+| `POST /api/admin/login` | 密码换取 Token（24 小时有效，HMAC 无状态签名） |
+| `POST /api/admin/upload` | 上传 apk / zip / json（单文件上限 300MB） |
+| `GET /api/admin/files` | 已发布文件列表 |
+| `DELETE /api/admin/file` | 删除文件 |
+| `POST /api/admin/version` | 写入 version.json（发布时间自动生成） |
+
+改密码后旧 Token 立即失效（密钥由密码派生）。
 
 ## 2. 常驻运行（systemd）
 
