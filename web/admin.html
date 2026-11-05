@@ -218,9 +218,10 @@ function dlPreview() {
   const q = sharecode ? '?sharecode=' + sharecode : ''
   $('dlPreview').innerHTML =
     '保存后将自动生成以下下载链接（文件需已上传）：<br>' +
-    'arm64-v8a：<code>' + base + 'LXMusic-Mod-v' + v + '-arm64-v8a.apk' + q + '</code><br>' +
-    'universal：<code>' + base + 'LXMusic-Mod-v' + v + '-universal.apk' + q + '</code><br>' +
-    'backscreen：<code>' + base + 'LXMusic-Mod-v' + v + '-backscreen-arm64-v8a.apk' + q + '</code>'
+    'arm64-v8a（原包名 · 覆盖升级）：<code>' + base + 'lxmod-origpkg-v' + v + '-arm64-v8a.apk' + q + '</code><br>' +
+    'universal（原包名 · 覆盖升级）：<code>' + base + 'lxmod-origpkg-v' + v + '-universal.apk' + q + '</code><br>' +
+    'backscreen（背屏 / 原子岛）：<code>' + base + 'lxmod-v' + v + '-backscreen-arm64-v8a.apk' + q + '</code><br>' +
+    'coexist（新包名 · 可共存）：<code>' + base + 'lxmod-v' + v + '-arm64-v8a.apk' + q + '</code>'
 }
 $('vVersion').addEventListener('input', dlPreview)
 

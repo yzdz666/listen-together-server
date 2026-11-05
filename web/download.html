@@ -46,15 +46,16 @@
 
   <section class="card">
     <h2>安装包</h2>
-    <p class="ver">最新版本 <b id="ver">v1.18.0</b> · 更新于 <span id="date">加载中…</span></p>
-    <a class="btn primary" id="btnArm" href="downloads/LXMusic-Mod-v1.18.0-arm64-v8a.apk">下载安卓安装包（推荐）<small>arm64-v8a · 2016 年后的绝大多数手机</small></a>
-    <a class="btn ghost" id="btnUni" href="downloads/LXMusic-Mod-v1.18.0-universal.apk">下载全架构安装包<small>universal · 兼容老旧设备 / 模拟器</small></a>
-    <a class="btn ghost" id="btnBackscreen" href="downloads/LXMusic-Mod-v1.18.0-backscreen-arm64-v8a.apk">下载背屏 / 原子岛兼容版<small>小米背屏 · iQOO 原子随身听（包名白名单版，与正版汽水音乐不能共存）</small></a>
-    <div class="warn muted">安装时如提示「未知来源」，允许一次即可；与原版包名不同，可共存。覆盖安装旧版二改版会保留数据。</div>
+    <p class="ver">最新版本 <b id="ver">v1.22.35</b> · 更新于 <span id="date">加载中…</span></p>
+    <a class="btn primary" id="btnArm" href="downloads/lxmod-origpkg-v1.22.35-arm64-v8a.apk">下载安装包 · 覆盖升级（推荐）<small>原包名 cn.toside.music.mobile · arm64-v8a · 直接覆盖旧版，歌单 / 设置 / 登录态全部保留</small></a>
+    <a class="btn ghost" id="btnUni" href="downloads/lxmod-origpkg-v1.22.35-universal.apk">全架构版 · 覆盖升级<small>原包名 · universal · 老旧设备 / 模拟器 / 不确定机型选这个</small></a>
+    <a class="btn ghost" id="btnCoexist" href="downloads/lxmod-v1.22.35-arm64-v8a.apk">新包名版（与官方版共存）<small>com.lxmod.music · 想同时保留官方版时用，安装后是独立 App，数据互不相通</small></a>
+    <a class="btn ghost" id="btnBackscreen" href="downloads/lxmod-v1.22.35-backscreen-arm64-v8a.apk">背屏 / 原子岛兼容版<small>com.luna.music · 小米背屏、iQOO 原子随身听白名单包名（与正版汽水音乐不能共存）</small></a>
+    <div class="warn muted">「覆盖升级」版与手机上的旧版二改版<b>同包名</b>，直接安装即可保留数据；若提示签名或版本冲突，说明当前装的是新包名版（com.lxmod.music），两者不能互相覆盖。安装时如提示「未知来源」，允许一次即可。</div>
   </section>
 
   <section class="card">
-    <h2>本版更新（<span id="logVer">v1.18.0</span>）</h2>
+    <h2>本版更新（<span id="logVer">v1.22.35</span>）</h2>
     <ul id="logList">
       <li>正在从服务器加载更新日志…</li>
     </ul>
@@ -72,7 +73,7 @@
       <li>App 源码：<a href="https://github.com/yzdz666/lx-music-mobile-mod" style="color:var(--primary)">yzdz666/lx-music-mobile-mod</a></li>
       <li>服务端 / 网页版源码：<a href="https://github.com/yzdz666/listen-together-server" style="color:var(--primary)">yzdz666/listen-together-server</a></li>
     </ul>
-    <a class="btn ghost" id="btnSrc" href="downloads/lx-music-mod-src-v1.18.0.zip">下载二改源码（打包版）<small>含 listen-together-server 与全部二改代码（不含签名密钥）</small></a>
+    <a class="btn ghost" id="btnSrc" href="downloads/lx-music-mod-src-v1.22.35.zip">下载二改源码（打包版）<small>含 listen-together-server 与全部二改代码（不含签名密钥）</small></a>
     <a class="btn ghost" href="admin.html">管理后台<small>上传安装包 / 源码 / 发布更新日志（需管理密码）</small></a>
     <ul>
       <li>自建房间服务器：<code>cd listen-together-server && npm install && node index.js</code></li>
@@ -93,11 +94,17 @@
   </footer>
 </div>
 <script>
-  // 分享网关要求所有请求都带 sharecode，站内链接统一补上当前页面的查询参数
+  // 分享网关要求所有请求都带 sharecode，站内链接统一补上当前页面的查询参数。
+  // 注意：下载链接是 version.json 异步拿回来后改写的，改完必须再跑一次，
+  // 否则「源码包 / 管理后台」这类按钮点下去会因为缺 sharecode 被网关拦成 403。
   var qs = location.search
-  Array.prototype.forEach.call(document.querySelectorAll('a[href^="/"], a[href^="downloads/"]'), function (a) {
-    if (a.getAttribute('href').indexOf('sharecode') === -1) a.setAttribute('href', a.getAttribute('href') + qs)
-  })
+  function applyShare() {
+    Array.prototype.forEach.call(document.querySelectorAll('a[href^="/"], a[href^="downloads/"], a[href^="admin"]'), function (a) {
+      var href = a.getAttribute('href')
+      if (href.indexOf('sharecode') === -1) a.setAttribute('href', href + qs)
+    })
+  }
+  applyShare()
   // version.json 加时间戳穿透缓存：确保发布后立刻看到新版本与更新时间（服务端也已对该文件返回 no-store）
   fetch('downloads/version.json' + qs + (qs ? '&' : '?') + '_=' + Date.now()).then(r => r.json()).then(info => {
     if (!info || !info.version) return
@@ -111,6 +118,10 @@
       if (info.download['arm64-v8a']) document.getElementById('btnArm').href = info.download['arm64-v8a']
       if (info.download.universal) document.getElementById('btnUni').href = info.download.universal
       if (info.download.backscreen) document.getElementById('btnBackscreen').href = info.download.backscreen
+      // 共存版（新包名）：发布信息里没有这一项时直接隐藏，避免把旧版本的包当成新版本给出去
+      var btnCoexist = document.getElementById('btnCoexist')
+      if (info.download.coexist) btnCoexist.href = info.download.coexist
+      else btnCoexist.style.display = 'none'
     }
     if (info.source) {
       // 兼容三种写法：完整 URL 原样；/downloads/xxx 或 downloads/xxx 去重复前缀；纯文件名补前缀
@@ -155,6 +166,9 @@
         list.appendChild(p)
       })
     }
+
+    // 链接刚被改写，补一次 sharecode
+    applyShare()
   }).catch(() => {
     // 拉取版本信息失败时保留页面上的默认链接（脚本已补 sharecode），不影响手动下载
     document.getElementById('logList').innerHTML = '<li>更新日志加载失败，请刷新重试（下载链接不受影响）</li>'

@@ -17,13 +17,27 @@ const DOWNLOADS_DIR = path.join(WEB_DIR, 'downloads')
 const VERSION_FILE = path.join(DOWNLOADS_DIR, 'version.json')
 
 /**
- * 管理密码：必须通过环境变量 ADMIN_PASSWORD 提供。
+ * 管理密码：优先环境变量 ADMIN_PASSWORD，其次同目录下的 .admin-secret 文件。
  *
  * 早先这里内置了一个默认密码，为了让管理后台开箱可用；但这意味着密码会随
  * 代码进入公开仓库，任何人都能登录发布站、上传文件、篡改 version.json。
- * 现在改为未配置即关闭管理接口（返回 503），部署时自行注入环境变量。
+ * 所以密码只从「仓库外」的来源读：环境变量，或 .admin-secret（已加入 .gitignore，
+ * 不进公开仓库）。两者都没有时管理接口整体关闭（返回 503）。
+ *
+ * 读文件这一路是为了不依赖进程启动方式——不管谁用 `npm start` 还是 `node index.js`
+ * 拉起服务，只要文件在，后台就能登录，不用记得带 env。
  */
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || ''
+const SECRET_FILE = path.join(__dirname, '.admin-secret')
+
+function readSecretFile() {
+  try {
+    return fs.readFileSync(SECRET_FILE, 'utf8').trim()
+  } catch {
+    return ''
+  }
+}
+
+const ADMIN_PASSWORD = (process.env.ADMIN_PASSWORD || readSecretFile()).trim()
 const ADMIN_ENABLED = ADMIN_PASSWORD.length > 0
 /** Token 有效期 */
 const TOKEN_TTL = 24 * 60 * 60 * 1000
@@ -182,10 +196,14 @@ function readVersion() {
 
 function normalizeDownload(download, version, origin, sharecode) {
   const result = {}
+  // 默认文件名必须和构建产物一致：标准包 lxmod-v{版本}-xxx，
+  // 原包名（覆盖升级）包 lxmod-origpkg-v{版本}-xxx，背屏包带 backscreen 后缀。
+  // 早先这里写成 LXMusic-Mod-v{版本}-xxx，发布后每条链接都是 404。
   const kinds = [
-    ['arm64-v8a', `LXMusic-Mod-v${version}-arm64-v8a.apk`],
-    ['universal', `LXMusic-Mod-v${version}-universal.apk`],
-    ['backscreen', `LXMusic-Mod-v${version}-backscreen-arm64-v8a.apk`],
+    ['arm64-v8a', `lxmod-origpkg-v${version}-arm64-v8a.apk`],
+    ['universal', `lxmod-origpkg-v${version}-universal.apk`],
+    ['backscreen', `lxmod-v${version}-backscreen-arm64-v8a.apk`],
+    ['coexist', `lxmod-v${version}-arm64-v8a.apk`],
   ]
   for (const [key, fileName] of kinds) {
     const provided = download && typeof download[key] === 'string' ? download[key].trim() : ''

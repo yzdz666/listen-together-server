@@ -1,9 +1,21 @@
 {
-  "version": "1.22.27",
-  "versionCode": 132000,
-  "date": "2026-11-04",
-  "desc": "v1.22.27（原包名版 cn.toside.music.mobile）· 歌词里的 // 清理\n\n- 清掉歌词里的 `//` 占位行（音源用它表示「这行没有翻译」）\n- 覆盖 App 歌词页、桌面歌词、锁屏歌词、投屏、一起听、下载歌词导出\n- QQ 歌词从源头过滤，新拉取的歌词不再带占位行\n- 修下载带翻译歌词时一半翻译行丢失（正则 lastIndex 残留）\n\n可直接覆盖旧版，歌单 / 设置 / 登录态 / 云盘曲库全部保留。versionCode 132000。",
+  "version": "1.22.35",
+  "versionCode": 140000,
+  "date": "2026-11-05 11:14",
+  "desc": "v1.22.35（原包名版 cn.toside.music.mobile）· 逐字歌词与备份导入修复\n\n- 逐字歌词：整行时长完整分给每个字，短句慢歌不再「唱得比人快」\n- 逐字歌词：音频缓冲导致时钟永久超前已修正（旧逻辑缓冲 1.2s 后整首快 1.2s）\n- 逐字歌词：rAF 限 60fps，高刷屏不再打满 JS 线程——这就是「一开录屏就正常」的根因\n- 逐字歌词：行尾最高 800ms 宽限，每句最后一个字都会点亮\n- 逐字歌词：空格不再占时长；40ms 极短行（封面 / 制作信息）也能排完\n- 导入备份：歌单按 id 匹配，顺序错位不再把用户歌单写成试听列表\n- 导入备份：null 项逐层过滤，不再整段中断，失败会提示具体是哪一步\n\n可直接覆盖旧版（同包名 cn.toside.music.mobile），歌单 / 设置 / 登录态 / 云盘曲库全部保留。versionCode 140000。",
   "history": [
+    {
+      "version": "1.22.34",
+      "desc": "逐字歌词修复（行时长按字分配），该版短句慢歌偏快"
+    },
+    {
+      "version": "1.22.33",
+      "desc": "侧边栏自绘"
+    },
+    {
+      "version": "1.22.27",
+      "desc": "歌词里的 // 占位行清理"
+    },
     {
       "version": "1.22.26",
       "desc": "WebDAV 云盘音乐播放修复：302 跳转不再丢认证、限流自动重试"
@@ -25,17 +37,15 @@
       "desc": "修复「已安装更高版本」装不上：versionCode 统一为 版本号×1000"
     },
     {
-      "version": "1.22.21",
-      "desc": "桌面歌词修复（该版 versionCode 有误装不上）"
-    },
-    {
       "version": "1.22.20",
       "desc": "关歌词崩溃 / 退出崩溃 / 锁屏歌词失效修复；新增本地备份"
     }
   ],
   "download": {
-    "arm64-v8a": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-origpkg-v1.22.27-arm64-v8a.apk?sharecode=MKPWEVLBUS",
-    "universal": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-origpkg-v1.22.27-universal.apk?sharecode=MKPWEVLBUS"
+    "arm64-v8a": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-origpkg-v1.22.35-arm64-v8a.apk?sharecode=MKPWEVLBUS",
+    "universal": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-origpkg-v1.22.35-universal.apk?sharecode=MKPWEVLBUS",
+    "backscreen": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-v1.22.35-backscreen-arm64-v8a.apk?sharecode=MKPWEVLBUS",
+    "coexist": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-v1.22.35-arm64-v8a.apk?sharecode=MKPWEVLBUS"
   },
-  "source": "lx-music-mod-src-v1.22.27.zip"
+  "source": "lx-music-mod-src-v1.22.35.zip"
 }
