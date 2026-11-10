@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="data:,">
-<title>LX Mod 桌面版 1.1.6 · 下载与说明</title>
-<meta name="description" content="LX Mod 桌面版 v1.1.6：修复云同步 403、听歌报告不更新、同一句歌词显示两遍；三端云同步与听歌报告已就位，手机与电脑共用一份歌单。全 11 档音质、网易云 / QQ / 酷狗三平台我的音乐、云盘、本地音乐、一起听、平台设置。">
+<title>LX Mod 桌面版 1.1.8 · 下载与说明</title>
+<meta name="description" content="LX Mod 桌面版 v1.1.8：修歌词制作名单被当成歌词播放、同一句重复显示两条；三端云同步与听歌报告已就位，手机与电脑共用一份歌单。全 11 档音质、网易云 / QQ / 酷狗三平台我的音乐、云盘、本地音乐、一起听、平台设置。">
 <style>:root{
   --paper:#E9ECEA;
   --wash:#DFE4E0;
@@ -158,8 +158,8 @@ footer a{color:var(--ink-2);text-decoration:underline;text-underline-offset:2px}
 <main class="sheet">
 
   <div class="edition">
-    <p class="kicker">WINDOWS / LINUX · 桌面版 v1.1.6</p>
-    <h1 class="version"><span class="mark" aria-hidden="true"></span>1.1.6</h1>
+    <p class="kicker">WINDOWS / LINUX · 桌面版 v1.1.8</p>
+    <h1 class="version"><span class="mark" aria-hidden="true"></span>1.1.8</h1>
     <p class="lede">这一版只修问题：云同步一直报 403、听歌报告边放边看永远是 0、同一句歌词上下显示两遍。三处都是 1.1.5 上线当天撞上的，与手机版 1.22.39 同一批修复。</p>
     <dl class="facts">
       <div><dt>系统</dt><dd>Windows 10/11 x64 · Linux x64</dd></div>
@@ -181,23 +181,23 @@ footer a{color:var(--ink-2);text-decoration:underline;text-underline-offset:2px}
   <section id="download">
     <div class="sec"><h2>下载</h2><span class="bar"></span><span class="aside">4 个文件</span></div>
     <div class="list">
-      <a class="item" href="downloads/LXMod-Desktop-v1.1.6-win-x64-Setup.exe" download>
-        <div class="name">LXMod-Desktop-v1.1.6-win-x64-Setup.exe</div>
+      <a class="item" href="downloads/LXMod-Desktop-v1.1.8-win-x64-Setup.exe" download>
+        <div class="name">LXMod-Desktop-v1.1.8-win-x64-Setup.exe</div>
         <div class="desc">Windows 安装版。装到本机，带开始菜单与桌面快捷方式，多数人用这个。</div>
         <div class="side"><span class="size">115.8 MB</span><span class="go">下载</span></div>
       </a>
-      <a class="item" href="downloads/LXMod-Desktop-v1.1.6-win-x64-green.7z" download>
-        <div class="name">LXMod-Desktop-v1.1.6-win-x64-green.7z</div>
+      <a class="item" href="downloads/LXMod-Desktop-v1.1.8-win-x64-green.7z" download>
+        <div class="name">LXMod-Desktop-v1.1.8-win-x64-green.7z</div>
         <div class="desc">Windows 绿色版。解压即用，不写注册表，适合放 U 盘或临时试用。</div>
         <div class="side"><span class="size">95.3 MB</span><span class="go">下载</span></div>
       </a>
-      <a class="item" href="downloads/LXMod-Desktop-v1.1.6-linux-x64.tar.gz" download>
-        <div class="name">LXMod-Desktop-v1.1.6-linux-x64.tar.gz</div>
-        <div class="desc">Linux 免安装包。解压后运行 <code>LXMod-Desktop-v1.1.6-linux-x64/lx-music-desktop</code>，主流 x64 发行版可用。</div>
+      <a class="item" href="downloads/LXMod-Desktop-v1.1.8-linux-x64.tar.gz" download>
+        <div class="name">LXMod-Desktop-v1.1.8-linux-x64.tar.gz</div>
+        <div class="desc">Linux 免安装包。解压后运行 <code>LXMod-Desktop-v1.1.8-linux-x64/lx-music-desktop</code>，主流 x64 发行版可用。</div>
         <div class="side"><span class="size">126.4 MB</span><span class="go">下载</span></div>
       </a>
-      <a class="item" href="downloads/lxmod-desktop-src-v1.1.6.zip" download>
-        <div class="name">lxmod-desktop-src-v1.1.6.zip</div>
+      <a class="item" href="downloads/lxmod-desktop-src-v1.1.8.zip" download>
+        <div class="name">lxmod-desktop-src-v1.1.8.zip</div>
         <div class="desc">完整可构建源码，不含 node_modules 与构建产物，含二改说明文档。</div>
         <div class="side"><span class="size">13.1 MB</span><span class="go">下载</span></div>
       </a>
@@ -310,7 +310,7 @@ footer a{color:var(--ink-2);text-decoration:underline;text-underline-offset:2px}
       </tbody>
     </table>
     <p class="table-note">完整校验值在下载目录的 <code>SHA256SUMS.txt</code>。Windows 可用 <code>certutil -hashfile 文件名 SHA256</code> 核对。</p>
-    <p class="table-note">程序检查更新会同时读取主站 <a href="downloads/desktop-version.json">desktop-version.json</a> 与桌面版 GitHub Release 清单，取版本号更高的一份，单源失败不影响结果。四个产物的 SHA-256 已与 GitHub Release v1.1.6 逐一核对。</p>
+    <p class="table-note">程序检查更新会同时读取主站 <a href="downloads/desktop-version.json">desktop-version.json</a> 与桌面版 GitHub Release 清单，取版本号更高的一份，单源失败不影响结果。四个产物的 SHA-256 已与 GitHub Release v1.1.8 逐一核对。</p>
   </section>
 
   <section id="faq">
@@ -346,7 +346,7 @@ footer a{color:var(--ink-2);text-decoration:underline;text-underline-offset:2px}
       </details>
       <details>
         <summary>怎么确认电脑版和手机版功能一致？</summary>
-        <p>功能基线按手机版 v1.22.39 的功能清单逐项对齐：1.22.36 ~ 1.22.38 补齐手机号登录、三端云同步、听歌报告，1.1.4 ~ 1.1.6 对应歌词时间解析、翻译占位、同步地址与听歌记账四处修复。手机特有的系统能力（Android 锁屏 / 灵动岛歌词、背屏适配、系统 TTS 引擎）在桌面端由原生能力替代。</p>
+        <p>功能基线按手机版 v1.22.39 的功能清单逐项对齐：1.22.36 ~ 1.22.38 补齐手机号登录、三端云同步、听歌报告，1.1.4 ~ 1.1.8 对应歌词时间解析、翻译占位、同步地址与听歌记账四处修复。手机特有的系统能力（Android 锁屏 / 灵动岛歌词、背屏适配、系统 TTS 引擎）在桌面端由原生能力替代。</p>
       </details>
     </div>
   </section>
@@ -356,6 +356,10 @@ footer a{color:var(--ink-2);text-decoration:underline;text-underline-offset:2px}
     <table>
       <thead><tr><th>版本</th><th>内容</th></tr></thead>
       <tbody>
+        <tr>
+          <td class="mono">v1.1.8</td>
+          <td>桌面歌词与 App 内歌词统一走解析前清洗：删除「曲：/编曲：/混音：/同期录音师：」等带时间戳的制作名单，合并 1 秒内重复的同一句（副歌隔段重复不受影响）。手机版 1.22.41 同一套实现。</td>
+        </tr>
         <tr>
           <td class="mono">v1.1.6</td>
           <td>修 1.1.5 暴露的三个问题（与手机版 1.22.39 同步）：① 云同步报 403 —— 默认同步地址自带 ?sharecode=xxx，拼接口名时接到了整串末尾，网关读到的 sharecode 被污染直接拒，改为接口名插到路径末尾、查询串重建；② 听歌报告播放中不更新 —— 之前只在切歌时结算，现在播放中每 5 秒落账、打开报告前先结算在播的那段；③ 同一句歌词显示两遍 —— 翻译文件里与正文相同的行被当译文挂上，解析时按「与正文相同 / 已挂译文相同」跳过，桌面歌词下发前再过滤一遍。</td>
@@ -404,7 +408,7 @@ footer a{color:var(--ink-2);text-decoration:underline;text-underline-offset:2px}
   <footer>
     <p>LX Mod 桌面版 · 作者 月下独酌（QQ 3139606844）</p>
     <p>基于 <a href="https://github.com/lyswhut/lx-music-desktop" target="_blank" rel="noopener">lx-music-desktop</a> 2.12.6 二次开发，遵循上游 Apache-2.0 许可，与洛雪官方无关联。</p>
-    <p>桌面版 v1.1.6 与手机版 v1.22.39 同步 · 四个产物均与 GitHub Release v1.1.6 逐一核对 SHA-256 · 2026-11-10</p>
+    <p>桌面版 v1.1.8 与手机版 v1.22.39 同步 · 四个产物均与 GitHub Release v1.1.8 逐一核对 SHA-256 · 2026-11-10</p>
     <p>本页仅提供二改版下载，音源脚本与歌曲版权归各自权利人所有。</p>
   </footer>
 </main>
@@ -420,10 +424,10 @@ footer a{color:var(--ink-2);text-decoration:underline;text-underline-offset:2px}
   })
   ;(function () {
     var names = {
-      'LXMod-Desktop-v1.1.6-win-x64-Setup.exe': 'Windows 安装版',
-      'LXMod-Desktop-v1.1.6-win-x64-green.7z': 'Windows 绿色版',
-      'LXMod-Desktop-v1.1.6-linux-x64.tar.gz': 'Linux 免安装包',
-      'lxmod-desktop-src-v1.1.6.zip': '二改源码'
+      'LXMod-Desktop-v1.1.8-win-x64-Setup.exe': 'Windows 安装版',
+      'LXMod-Desktop-v1.1.8-win-x64-green.7z': 'Windows 绿色版',
+      'LXMod-Desktop-v1.1.8-linux-x64.tar.gz': 'Linux 免安装包',
+      'lxmod-desktop-src-v1.1.8.zip': '二改源码'
     };
     var body = document.getElementById('checksum-body');
     function size(n) {

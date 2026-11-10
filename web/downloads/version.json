@@ -1,16 +1,29 @@
 {
-  "version": "1.22.40",
-  "versionCode": 145000,
-  "date": "2026-11-10 12:55",
-  "desc": "v1.22.40（原包名版 cn.toside.music.mobile）· 修桌面歌词换行重影 / 听歌报告看不全 / 同步码复制 / 网页版看备份\n\n- 桌面歌词换行「糊一下又重渲染」：容器是 TextSwitcher，换行时旧句淡出、新句淡入各 300ms，两个没有背景的 TextView 叠在同一位置，逐字高亮还在推进，看起来就像渲染坏了。1.22.39 改的是译文去重，没碰到这一层。现在改成单个 LyricTextView 直切，「切换动画」保留但改为整窗轻微淡入（0.85→1，90ms），默认关闭\n- 顺带修歌词横向滚动：原来不管文字放不放得下，1.5 秒后都会启动滚动定时器空转，每 10ms 重绘一次；现在只有文本超宽才滚，翻译行固定对齐不再跟着主行跑偏\n- 听歌报告「一年 / 全部」滑不动：弹窗内容容器上的 onStartShouldSetResponder 抢走了滚动手势，Modal 已把背景遮罩拆成兄弟层；榜单从 10 首 / 8 位放宽到 50 首 / 20 位，页面不再二次截断；趋势图一年按周、全部按月聚合\n- 同步码 / 密钥可一键复制：设置页三个输入项右侧加了「复制」按钮（长按选中在部分 ROM 上会被输入法菜单抢掉）\n- 网页版查看备份：同步服务新增 /sync 页面，填同步码 + 密钥即可查看云端歌单 / 收藏 / 设置，支持导出 JSON\n- 测试 99 例全通过：歌词 33、同步 32、记账与报告 25、桌面歌词 Android View（Robolectric）9\n\n安装：从 1.22.39 覆盖安装即可，数据与同步凭据保留。",
+  "version": "1.22.41",
+  "versionCode": 146000,
+  "date": "2026-11-10 14:14",
+  "desc": "v1.22.41（原包名版 cn.toside.music.mobile）· 歌词制作名单与重复句修复 / 合并优质源 / 同步带音源与主题\n\n- 歌词「曲：马嘉祺 / 编曲：钱雷 / 同期录音师：…」被当成歌词逐句播放：解析前扫描前 45 秒，命中制作名单的行整行删除，中段同名行不动\n- 同一句歌词重复出现（红字当前句下紧跟一条一模一样的黑字）：相邻两行去掉空白标点后相同且时间差 1 秒内合并成一条；副歌隔几十秒重复保持原样\n- 清洗在解析前执行，App 内歌词 / 桌面歌词 / 通知栏 / 一起听四处同时生效，手机与电脑同一套实现\n- 新增「合并优质源」（设置 → 音乐来源）：逐个切换自定义源探测网易云 / QQ / 酷我 / 酷狗四平台取链速度，按平台路由到最快的源，生成单个合并脚本；阈值可调 500～3000ms，支持结果表格与一键还原\n- 云同步新增自定义音源脚本与自定义主题：换设备不用重新导入，单个脚本超过 2MB 跳过；音源按「名称 + 版本」判重\n- 网页版 /sync 增加音源 / 主题标签页，可看脚本大小、作者、来源、描述与主题配色\n- 测试 142 例全通过（歌词 61、同步 42、记账 25、音源合并 14）\n\n安装：从 1.22.40 覆盖安装即可，数据与同步凭据保留。",
   "download": {
-    "arm64-v8a": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-origpkg-v1.22.40-arm64-v8a.apk?sharecode=MKPWEVLBUS",
-    "universal": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-origpkg-v1.22.40-universal.apk?sharecode=MKPWEVLBUS",
-    "backscreen": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-v1.22.40-backscreen-arm64-v8a.apk?sharecode=MKPWEVLBUS",
-    "coexist": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-v1.22.40-arm64-v8a.apk?sharecode=MKPWEVLBUS"
+    "arm64-v8a": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-origpkg-v1.22.41-arm64-v8a.apk?sharecode=MKPWEVLBUS",
+    "universal": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-origpkg-v1.22.41-universal.apk?sharecode=MKPWEVLBUS",
+    "backscreen": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-v1.22.41-backscreen-arm64-v8a.apk?sharecode=MKPWEVLBUS",
+    "coexist": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-v1.22.41-arm64-v8a.apk?sharecode=MKPWEVLBUS"
   },
-  "source": "lx-music-mod-src-v1.22.40.zip",
+  "source": "lx-music-mod-src-v1.22.41.zip",
   "history": [
+    {
+      "version": "1.22.40",
+      "versionCode": 145000,
+      "date": "2026-11-10 12:55",
+      "desc": "v1.22.40（原包名版 cn.toside.music.mobile）· 修桌面歌词换行重影 / 听歌报告看不全 / 同步码复制 / 网页版看备份\n\n- 桌面歌词换行「糊一下又重渲染」：容器是 TextSwitcher，换行时旧句淡出、新句淡入各 300ms，两个没有背景的 TextView 叠在同一位置，逐字高亮还在推进，看起来就像渲染坏了。1.22.39 改的是译文去重，没碰到这一层。现在改成单个 LyricTextView 直切，「切换动画」保留但改为整窗轻微淡入（0.85→1，90ms），默认关闭\n- 顺带修歌词横向滚动：原来不管文字放不放得下，1.5 秒后都会启动滚动定时器空转，每 10ms 重绘一次；现在只有文本超宽才滚，翻译行固定对齐不再跟着主行跑偏\n- 听歌报告「一年 / 全部」滑不动：弹窗内容容器上的 onStartShouldSetResponder 抢走了滚动手势，Modal 已把背景遮罩拆成兄弟层；榜单从 10 首 / 8 位放宽到 50 首 / 20 位，页面不再二次截断；趋势图一年按周、全部按月聚合\n- 同步码 / 密钥可一键复制：设置页三个输入项右侧加了「复制」按钮（长按选中在部分 ROM 上会被输入法菜单抢掉）\n- 网页版查看备份：同步服务新增 /sync 页面，填同步码 + 密钥即可查看云端歌单 / 收藏 / 设置，支持导出 JSON\n- 测试 99 例全通过：歌词 33、同步 32、记账与报告 25、桌面歌词 Android View（Robolectric）9\n\n安装：从 1.22.39 覆盖安装即可，数据与同步凭据保留。",
+      "download": {
+        "arm64-v8a": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-origpkg-v1.22.40-arm64-v8a.apk?sharecode=MKPWEVLBUS",
+        "universal": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-origpkg-v1.22.40-universal.apk?sharecode=MKPWEVLBUS",
+        "backscreen": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-v1.22.40-backscreen-arm64-v8a.apk?sharecode=MKPWEVLBUS",
+        "coexist": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-v1.22.40-arm64-v8a.apk?sharecode=MKPWEVLBUS"
+      },
+      "source": "lx-music-mod-src-v1.22.40.zip"
+    },
     {
       "version": "1.22.39",
       "versionCode": 144000,

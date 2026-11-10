@@ -1,9 +1,36 @@
 {
-  "version": "1.22.27",
-  "versionCode": 132000,
-  "date": "2026-11-04",
-  "desc": "v1.22.27（新包名 com.lxmod.music）· 歌词里的 // 清理\n\n`//` 是 QQ 音乐（TME）翻译歌词里的占位符：这一行没有翻译时，正文就写 `//`。\n之前把翻译原样塞给渲染层，于是每句没翻译的歌词下面都多出一行 `//`。\n英文歌、日文歌最明显。\n\n现在 App 歌词页（竖屏/横屏/逐字）、桌面歌词、锁屏系统歌词、投屏、一起听、\n下载歌词导出，六个出口全部清掉占位行；QQ 歌词在拉取时也从源头过滤。\n\n顺手修：下载带翻译的歌词时，一半翻译行会丢。原因是代码里用带 g 的正则做 exec，\nlastIndex 残留导致每隔一行匹配失败。8 行歌词实测 8 行全保留（修复前只剩 4 行）。\n\nversionCode 132000，可直接覆盖 1.22.20 ~ 1.22.26。",
+  "version": "1.22.41",
+  "versionCode": 146000,
+  "date": "2026-11-10 14:14",
+  "desc": "v1.22.41（新包名 com.lxmod.music）· 歌词制作名单与重复句修复 / 合并优质源 / 同步带音源与主题\n\n- 制作名单（曲：/编曲：/混音：/同期录音师：…）不再被当成歌词逐句播放\n- 同一句重复出现（红字下紧跟一模一样的黑字）合并成一条，副歌重复不受影响\n- 新增「合并优质源」：按平台探测四平台取链速度，自动路由到最快的源\n- 云同步带上自定义音源脚本与主题；网页版可查看\n- 测试 142 例全通过\n\n新包名与官方版可共存；从 1.22.40 新包名版直接覆盖安装即可。",
+  "download": {
+    "arm64-v8a": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-v1.22.41-arm64-v8a.apk?sharecode=MKPWEVLBUS",
+    "universal": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-v1.22.41-universal.apk?sharecode=MKPWEVLBUS",
+    "backscreen": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-v1.22.41-backscreen-arm64-v8a.apk?sharecode=MKPWEVLBUS"
+  },
   "history": [
+    {
+      "version": "1.22.40",
+      "versionCode": 145000,
+      "date": "2026-11-10 13:08",
+      "desc": "v1.22.40（新包名 com.lxmod.music）· 修桌面歌词换行重影 / 听歌报告看不全 / 同步码复制 / 网页版看备份\n\n- 桌面歌词换行「糊一下又重渲染」：容器是 TextSwitcher，换行时旧句淡出、新句淡入各 300ms，两个没有背景的 TextView 叠在同一位置；现在改成单个 LyricTextView 直切，切换动画改为整窗轻微淡入并默认关闭\n- 歌词横向滚动只在文本超宽时启动，翻译行固定对齐不跟着跑\n- 听歌报告「一年 / 全部」可以正常下滑，榜单放宽到 50 首 / 20 位歌手，趋势图按周 / 月聚合\n- 同步码 / 密钥可一键复制\n- 网页版新增 /sync 页面查看云端备份\n\n新包名与官方版可共存；从 1.22.39 新包名版直接覆盖安装即可。",
+      "download": {
+        "arm64-v8a": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-v1.22.40-arm64-v8a.apk?sharecode=MKPWEVLBUS",
+        "universal": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-v1.22.40-universal.apk?sharecode=MKPWEVLBUS",
+        "backscreen": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-v1.22.40-backscreen-arm64-v8a.apk?sharecode=MKPWEVLBUS"
+      }
+    },
+    {
+      "version": "1.22.27",
+      "versionCode": 132000,
+      "date": "2026-11-04",
+      "desc": "v1.22.27（新包名 com.lxmod.music）· 歌词里的 // 清理\n\n`//` 是 QQ 音乐（TME）翻译歌词里的占位符：这一行没有翻译时，正文就写 `//`。\n之前把翻译原样塞给渲染层，于是每句没翻译的歌词下面都多出一行 `//`。\n英文歌、日文歌最明显。\n\n现在 App 歌词页（竖屏/横屏/逐字）、桌面歌词、锁屏系统歌词、投屏、一起听、\n下载歌词导出，六个出口全部清掉占位行；QQ 歌词在拉取时也从源头过滤。\n\n顺手修：下载带翻译的歌词时，一半翻译行会丢。原因是代码里用带 g 的正则做 exec，\nlastIndex 残留导致每隔一行匹配失败。8 行歌词实测 8 行全保留（修复前只剩 4 行）。\n\nversionCode 132000，可直接覆盖 1.22.20 ~ 1.22.26。",
+      "download": {
+        "arm64-v8a": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-v1.22.27-arm64-v8a.apk?sharecode=MKPWEVLBUS",
+        "universal": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-v1.22.27-universal.apk?sharecode=MKPWEVLBUS",
+        "backscreen": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-v1.22.27-backscreen-arm64-v8a.apk?sharecode=MKPWEVLBUS"
+      }
+    },
     {
       "version": "1.22.26",
       "desc": "WebDAV 云盘音乐播放修复：302 跳转不再丢认证、限流自动重试"
@@ -32,10 +59,5 @@
       "version": "1.22.20",
       "desc": "关歌词崩溃 / 退出崩溃 / 锁屏歌词失效修复；新增本地备份"
     }
-  ],
-  "download": {
-    "arm64-v8a": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-v1.22.27-arm64-v8a.apk?sharecode=MKPWEVLBUS",
-    "universal": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-v1.22.27-universal.apk?sharecode=MKPWEVLBUS",
-    "backscreen": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-v1.22.27-backscreen-arm64-v8a.apk?sharecode=MKPWEVLBUS"
-  }
+  ]
 }

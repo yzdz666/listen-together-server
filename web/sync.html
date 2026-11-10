@@ -48,7 +48,7 @@
   button.ghost { background: transparent; border: 1px solid var(--line); color: var(--sub); font-weight: 500; }
   .hint { font-size: 12px; color: var(--sub); margin: 10px 0 0; }
   .err { color: var(--danger); font-size: 13px; min-height: 18px; margin: 8px 0 0; }
-  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
   .stat { text-align: center; padding: 6px 2px; }
   .stat b { display: block; font-size: 20px; font-weight: 700; letter-spacing: -.5px; }
   .stat span { font-size: 11px; color: var(--sub); }
@@ -79,7 +79,7 @@
   .badge { font-size: 11px; padding: 3px 8px; border-radius: 999px; background: rgba(255,255,255,.08); color: var(--sub); }
   .badge.fav { background: rgba(255, 128, 128, .14); color: #ff9a9a; }
   @media (max-width: 420px) {
-    .stats { grid-template-columns: repeat(2, 1fr); }
+    .stats { grid-template-columns: repeat(3, 1fr); }
     .setting { flex-direction: column; gap: 2px; }
     .setting .k { flex: none; }
   }
@@ -112,6 +112,8 @@
         <button class="tab on" data-tab="list" type="button">歌单</button>
         <button class="tab" data-tab="favorite" type="button">收藏</button>
         <button class="tab" data-tab="settings" type="button">设置项</button>
+        <button class="tab" data-tab="userApi" type="button">音源</button>
+        <button class="tab" data-tab="theme" type="button">主题</button>
       </div>
       <div id="content"></div>
     </div>
@@ -184,6 +186,8 @@
     var favs = activeItems('favorite')
     var songs = lists.concat(favs).reduce(function (sum, item) { return sum + songListOf(item).length }, 0)
     var settings = data.settings ? Object.keys(data.settings).length : 0
+    var userApis = activeItems('userApi').length
+    var themes = activeItems('theme').length
 
     var stats = $('stats')
     stats.textContent = ''
@@ -191,7 +195,9 @@
       [lists.length, '歌单'],
       [favs.length, '收藏夹'],
       [songs, '歌曲'],
-      [settings, '设置项']
+      [settings, '设置项'],
+      [userApis, '音源'],
+      [themes, '主题']
     ].forEach(function (pair) {
       var box = el('div', 'stat')
       box.appendChild(el('b', null, String(pair[0])))
@@ -275,12 +281,78 @@
     })
   }
 
+  /** 音源脚本 / 自定义主题：服务端只存 data，字段都做兜底，脏数据也不让整页白屏 */
+  function renderAssets(kind) {
+    var box = $('content')
+    box.textContent = ''
+    var items = activeItems(kind)
+    if (!items.length) {
+      box.appendChild(el('div', 'empty', kind === 'userApi' ? '这个空间还没有同步过自定义音源' : '这个空间还没有同步过自定义主题'))
+      return
+    }
+    items.forEach(function (item) {
+      var data = item.data || {}
+      var card = el('div', 'list')
+      var head = el('div', 'list-head')
+      head.appendChild(el('span', 'chev', '▶'))
+      head.appendChild(el('span', 'list-name', item.name || item.id || '(未命名)'))
+
+      if (kind === 'userApi') {
+        var info = data.info || {}
+        var script = typeof data.script === 'string' ? data.script : ''
+        var ver = info.version ? (/^\d/.test(String(info.version)) ? 'v' + info.version : String(info.version)) : '版本未知'
+        head.appendChild(el('span', 'badge', ver))
+        head.appendChild(el('span', 'list-sub', fmtBytes(script.length) + ' · ' + fmtTime(item.updatedAt)))
+        card.appendChild(head)
+
+        var detail = el('div', 'songs')
+        ;[
+          ['脚本大小', fmtBytes(script.length) + '（' + script.length.toLocaleString() + ' 字符）'],
+          ['作者', info.author ? String(info.author) : '未标注'],
+          ['来源', info.homepage ? String(info.homepage) : '本地导入'],
+          ['描述', info.description ? String(info.description) : '无'],
+          ['更新时间', fmtTime(item.updatedAt)]
+        ].forEach(function (rowData) {
+          var row = el('div', 'setting')
+          row.appendChild(el('div', 'k', rowData[0]))
+          row.appendChild(el('div', 'v', rowData[1]))
+          detail.appendChild(row)
+        })
+        card.appendChild(detail)
+      } else {
+        var theme = data.theme || {}
+        head.appendChild(el('span', 'badge', theme.isDark ? '暗色' : '亮色'))
+        head.appendChild(el('span', 'list-sub', fmtTime(item.updatedAt)))
+        card.appendChild(head)
+
+        var colors = theme.config && theme.config.themeColors ? Object.keys(theme.config.themeColors).length : 0
+        var detail2 = el('div', 'songs')
+        ;[
+          ['主题 ID', String(theme.id || item.id)],
+          ['颜色数量', colors + ' 个'],
+          ['主色', theme.config && theme.config.themeColors && theme.config.themeColors['c-primary'] ? String(theme.config.themeColors['c-primary']) : '未记录'],
+          ['更新时间', fmtTime(item.updatedAt)]
+        ].forEach(function (rowData) {
+          var row = el('div', 'setting')
+          row.appendChild(el('div', 'k', rowData[0]))
+          row.appendChild(el('div', 'v', rowData[1]))
+          detail2.appendChild(row)
+        })
+        card.appendChild(detail2)
+      }
+
+      head.addEventListener('click', function () { card.classList.toggle('open') })
+      box.appendChild(card)
+    })
+  }
+
   function renderTab() {
     var tabs = document.querySelectorAll('.tab')
     for (var i = 0; i < tabs.length; i++) {
       tabs[i].classList.toggle('on', tabs[i].getAttribute('data-tab') === state.tab)
     }
     if (state.tab === 'settings') renderSettings()
+    else if (state.tab === 'userApi' || state.tab === 'theme') renderAssets(state.tab)
     else renderList(state.tab)
   }
 
