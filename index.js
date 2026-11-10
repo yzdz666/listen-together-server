@@ -15,6 +15,7 @@ const path = require('path')
 const crypto = require('crypto')
 const { WebSocketServer } = require('ws')
 const { handleAdminApi } = require('./admin')
+const syncStore = require('./sync-store')
 
 const PORT = parseInt(process.env.PORT || '23333', 10)
 const HOST = process.env.HOST || '0.0.0.0'
@@ -787,6 +788,97 @@ function serveStatic(req, res, urlPath) {
   return true
 }
 
+/** 同步接口请求体上限：歌单多的时候单次可到几 MB */
+const MAX_SYNC_BODY = 9 * 1024 * 1024
+/** 同步接口的简单频率限制（同一 IP） */
+const SYNC_RATE_WINDOW = 60 * 1000
+const SYNC_RATE_COUNT = 120
+const syncRateMap = new Map()
+
+function readJsonBody(req, limit) {
+  return new Promise((resolve, reject) => {
+    const chunks = []
+    let size = 0
+    let aborted = false
+    req.on('data', (chunk) => {
+      if (aborted) return
+      size += chunk.length
+      if (size > limit) {
+        aborted = true
+        reject(Object.assign(new Error('body_too_large'), { statusCode: 413 }))
+        req.destroy()
+        return
+      }
+      chunks.push(chunk)
+    })
+    req.on('end', () => {
+      if (aborted) return
+      try {
+        const text = Buffer.concat(chunks).toString('utf8')
+        resolve(text ? JSON.parse(text) : {})
+      } catch {
+        reject(Object.assign(new Error('invalid_json'), { statusCode: 400 }))
+      }
+    })
+    req.on('error', (err) => { if (!aborted) reject(err) })
+  })
+}
+
+function allowSyncRate(ip) {
+  const now = Date.now()
+  const entry = syncRateMap.get(ip)
+  if (!entry || now - entry.at > SYNC_RATE_WINDOW) {
+    syncRateMap.set(ip, { at: now, count: 1 })
+    return true
+  }
+  entry.count++
+  return entry.count <= SYNC_RATE_COUNT
+}
+
+/**
+ * 三端同步接口。
+ *
+ * 全部走 POST：secret 放在请求体里，不进 URL 查询串 —— 网关、日志、
+ * 浏览器历史都不该留下同步密钥。代价是不能用 GET 语义缓存，但同步本来就是 no-store。
+ */
+async function handleSyncApi(req, res, pathname) {
+  const ip = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || req.socket.remoteAddress || 'unknown'
+  if (!allowSyncRate(ip)) return sendJson(res, 429, { ok: false, error: 'rate_limited' })
+  if (req.method !== 'POST') return sendJson(res, 405, { ok: false, error: 'method_not_allowed' })
+
+  let body
+  try {
+    body = await readJsonBody(req, MAX_SYNC_BODY)
+  } catch (err) {
+    return sendJson(res, err.statusCode || 400, { ok: false, error: err.message })
+  }
+
+  try {
+    if (pathname === '/api/sync/create') {
+      const result = syncStore.createSpace(body)
+      log('sync space created:', result.code)
+      return sendJson(res, 200, { ok: true, ...result })
+    }
+    if (pathname === '/api/sync/push') {
+      const result = await syncStore.pushSpace(body.code, body.secret, body)
+      return sendJson(res, 200, { ok: true, ...result })
+    }
+    if (pathname === '/api/sync/pull') {
+      return sendJson(res, 200, { ok: true, ...syncStore.pullSpace(body.code, body.secret) })
+    }
+    if (pathname === '/api/sync/info') {
+      return sendJson(res, 200, { ok: true, ...syncStore.statSpace(body.code, body.secret) })
+    }
+    return sendJson(res, 404, { ok: false, error: 'not_found' })
+  } catch (err) {
+    if (err.statusCode === 401) return sendJson(res, 401, { ok: false, error: 'auth_failed' })
+    if (err.statusCode === 409) return sendJson(res, 409, { ok: false, error: 'code_exists' })
+    if (err.statusCode === 413) return sendJson(res, 413, { ok: false, error: 'space_too_large' })
+    log('sync api error:', err.message)
+    return sendJson(res, 500, { ok: false, error: 'server_error' })
+  }
+}
+
 const server = http.createServer((req, res) => {
   const url = new URL(req.url || '/', `http://${req.headers.host || 'localhost'}`)
   const pathname = decodeURIComponent(url.pathname)
@@ -805,6 +897,12 @@ const server = http.createServer((req, res) => {
   if (pathname === '/favicon.ico') {
     res.writeHead(204, { 'Access-Control-Allow-Origin': '*' })
     res.end()
+    return
+  }
+
+  // 三端同步（歌单 / 收藏 / 设置），与一起听房间互不影响
+  if (pathname.startsWith('/api/sync/')) {
+    void handleSyncApi(req, res, pathname)
     return
   }
 
@@ -835,6 +933,12 @@ const server = http.createServer((req, res) => {
       maxChatLength: MAX_CHAT_LENGTH,
       web: '/',
       websocket: '与 HTTP 同端口，直接使用 ws:// 或 wss://',
+      sync: {
+        api: '/api/sync/',
+        version: 1,
+        maxBodyBytes: MAX_SYNC_BODY,
+        endpoints: ['create', 'push', 'pull', 'info'],
+      },
     })
     return
   }
@@ -858,6 +962,12 @@ const server = http.createServer((req, res) => {
   if (pathname === '/' || pathname === '/web' || pathname.startsWith('/web/')) {
     const rel = pathname === '/' || pathname === '/web' ? '/index.html' : pathname.slice(4)
     if (serveStatic(req, res, rel)) return
+  }
+
+  // 同步空间查看页：/sync 与 /sync.html 等价。
+  // 页面本身不含任何数据，只有同步码 + 密钥都填对时才会通过 /api/sync/pull 取到内容。
+  if (pathname === '/sync' || pathname === '/sync/') {
+    if (serveStatic(req, res, '/sync.html')) return
   }
 
   // 音频代理：https 页面不能直接播 http 音频（浏览器混合内容拦截），同源转发解决；

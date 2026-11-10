@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>LX Mod 桌面版 1.1.6 · 下载与说明</title>
+<meta name="description" content="LX Mod 桌面版 v1.1.6：修复云同步 403、听歌报告不更新、同一句歌词显示两遍；三端云同步与听歌报告已就位，手机与电脑共用一份歌单。全 11 档音质、网易云 / QQ / 酷狗三平台我的音乐、云盘、本地音乐、一起听、平台设置。">
+<style>:root{
+  --paper:#E9ECEA;
+  --wash:#DFE4E0;
+  --ink:#1E2A28;
+  --ink-2:#4F5C58;
+  --ink-3:#5E6A65;
+  --rule:#C4CDC7;
+  --rule-2:#9EAAA3;
+  --seal:#A63A2A;
+  --seal-dark:#8A2F22;
+  --serif:"Noto Serif CJK SC","Source Han Serif SC","Songti SC","STSong","SimSun",serif;
+  --sans:"Noto Sans CJK SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  --mono:ui-monospace,"SFMono-Regular",Menlo,Consolas,"Liberation Mono",monospace;
+}
+*,*::before,*::after{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.78 var(--sans);-webkit-font-smoothing:antialiased}
+a{color:inherit}
+::selection{background:#C9D6D0;color:var(--ink)}
+:focus:not(:focus-visible){outline:none}
+:focus-visible{outline:2px solid var(--seal);outline-offset:3px}
+code{font:12.5px var(--mono);background:var(--wash);padding:1px 4px}
+
+.masthead{border-bottom:1px solid var(--rule-2)}
+.masthead .in{max-width:920px;margin:0 auto;padding:14px 24px;display:flex;align-items:baseline;gap:18px;flex-wrap:wrap}
+.wordmark{font:600 15px/1.3 var(--serif);letter-spacing:.06em;white-space:nowrap}
+.masthead .sub{font:11.5px var(--mono);color:var(--ink-3);letter-spacing:.04em}
+.masthead nav{margin-left:auto;display:flex;gap:24px;flex-wrap:wrap;font-size:13px}
+.masthead nav a{color:var(--ink-2);text-decoration:none;padding-bottom:2px;border-bottom:1px solid transparent}
+.masthead nav a:hover{color:var(--ink);border-bottom-color:var(--rule-2)}
+.masthead nav a[aria-current="page"]{color:var(--ink);border-bottom-color:var(--seal)}
+
+.sheet{max-width:920px;margin:0 auto;padding:0 24px 80px}
+.edition{padding:48px 0 30px;border-bottom:1px solid var(--rule-2)}
+.kicker{font:11.5px/1.5 var(--mono);color:var(--ink-3);letter-spacing:.08em;margin:0}
+.version{font:600 clamp(54px,10.5vw,92px)/1.02 var(--serif);letter-spacing:-.035em;margin:12px 0 0;display:flex;align-items:baseline;gap:14px}
+.version .mark{width:11px;height:11px;background:var(--seal);display:inline-block;flex:none;transform:translateY(-.12em)}
+.lede{font:400 18px/1.7 var(--serif);max-width:40em;margin:16px 0 0}
+.facts{display:flex;flex-wrap:wrap;gap:4px 32px;margin:22px 0 0;padding:0}
+.facts div{display:flex;gap:9px;font:11.5px/1.9 var(--mono);color:var(--ink-2)}
+.facts dt{color:var(--ink-3)}
+.facts dd{margin:0}
+
+section{padding-top:40px}
+.sec{display:flex;align-items:baseline;gap:14px;margin:0 0 16px}
+.sec h2{font:600 20px/1.3 var(--serif);margin:0;white-space:nowrap;letter-spacing:.01em}
+.sec .bar{flex:1;height:1px;background:var(--rule-2);transform:translateY(-5px)}
+.sec .aside{font:11.5px var(--mono);color:var(--ink-3);white-space:nowrap}
+p{max-width:44em;margin:0 0 13px}
+.muted{color:var(--ink-2)}
+.small{font-size:13px;color:var(--ink-2)}
+h3{font:600 15px/1.6 var(--sans);margin:24px 0 6px;padding-left:13px;border-left:2px solid var(--rule-2)}
+h3:first-child{margin-top:0}
+.callout{border-left:2px solid var(--seal);padding:2px 0 2px 16px;margin:20px 0;max-width:44em}
+.callout p{margin:0 0 9px}
+.callout p:last-child{margin:0}
+
+.group{display:flex;align-items:baseline;gap:12px;margin:24px 0 8px;font:11.5px/1.5 var(--mono);color:var(--ink-2)}
+.group .bar{flex:1;height:1px;background:var(--rule)}
+.list{list-style:none;margin:0;padding:0;border-top:1px solid var(--rule-2)}
+.item{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:20px;padding:12px 8px 12px 0;border-bottom:1px solid var(--rule);text-decoration:none;color:inherit;transition:background-color .12s}
+.item .name{font:12.5px/1.55 var(--mono);word-break:break-all}
+.item .desc{grid-column:1;font:13px/1.65 var(--sans);color:var(--ink-2);margin-top:3px}
+.item .side{grid-column:2;grid-row:1/span 2;align-self:center;text-align:right;white-space:nowrap;padding-left:8px}
+.item .size{display:block;font:11.5px/1.6 var(--mono);color:var(--ink-3)}
+.item .go{font:13px/1.6 var(--sans);color:var(--seal);border-bottom:1px solid var(--seal)}
+@media(hover:hover){
+  .item:hover{background:var(--wash)}
+  .item:hover .go{color:var(--seal-dark);border-bottom-color:var(--seal-dark)}
+}
+.item:active{background:#D3DAD5}
+
+.feats{border-top:1px solid var(--rule-2)}
+.feat{display:grid;grid-template-columns:168px minmax(0,1fr);column-gap:26px;padding:14px 0 15px;border-bottom:1px solid var(--rule)}
+.feat h3{font:600 14px/1.6 var(--sans);margin:0;padding:0;border:0}
+.feat-body p,.feat-body ul{margin:0;font:13px/1.7 var(--sans);color:var(--ink-2)}
+.feat-body ul{padding-left:1.15em;margin-top:5px}
+.feat-body li{margin:2px 0}
+.qualities{font:11.5px/1.9 var(--mono);color:var(--ink-2);margin-top:9px;letter-spacing:.01em}
+
+.steps{list-style:none;margin:0;padding:0;border-top:1px solid var(--rule-2);counter-reset:s}
+.steps li{counter-increment:s;position:relative;padding:11px 0 11px 46px;border-bottom:1px solid var(--rule);font-size:14px;line-height:1.75}
+.steps li::before{content:counter(s,decimal-leading-zero);position:absolute;left:0;top:11px;font:11.5px/1.9 var(--mono);color:var(--ink-3)}
+.kbd{font:11.5px var(--mono);border:1px solid var(--rule-2);border-bottom-width:2px;padding:0 4px}
+
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:9px 12px 9px 0;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font:11.5px/1.6 var(--mono);font-weight:400;color:var(--ink-3);border-bottom-color:var(--rule-2)}
+td.mono{font:12px/1.7 var(--mono);word-break:break-all}
+th:first-child,td:first-child{white-space:nowrap;word-break:normal}
+.table-note{font:12px/1.8 var(--sans);color:var(--ink-2);margin-top:10px}
+.table-note a{text-decoration:underline;text-underline-offset:2px;text-decoration-color:var(--rule-2)}
+
+.faq{border-top:1px solid var(--rule-2)}
+details{border-bottom:1px solid var(--rule);padding:11px 0}
+details summary{cursor:pointer;list-style:none;display:flex;gap:11px;font-size:14px}
+details summary::-webkit-details-marker{display:none}
+details summary::before{content:"+";font:13px/1.6 var(--mono);color:var(--seal);flex:none}
+details[open] summary::before{content:"\2212"}
+details p{margin:7px 0 2px 24px;font-size:13px;color:var(--ink-2);max-width:43em}
+
+.links{list-style:none;margin:0;padding:0;border-top:1px solid var(--rule-2)}
+.links li{display:grid;grid-template-columns:132px minmax(0,1fr);gap:0 20px;padding:10px 0;border-bottom:1px solid var(--rule);align-items:baseline}
+.links .lab{font:11.5px/1.7 var(--mono);color:var(--ink-3)}
+.links a{font:12.5px/1.7 var(--mono);word-break:break-all;color:var(--ink);text-decoration:underline;text-underline-offset:2px;text-decoration-color:var(--rule-2)}
+.links a:hover{color:var(--seal);text-decoration-color:var(--seal)}
+
+footer{margin-top:52px;padding-top:16px;border-top:1px solid var(--rule-2);font:11.5px/1.95 var(--mono);color:var(--ink-3)}
+footer p{margin:0 0 6px;max-width:none}
+footer a{color:var(--ink-2);text-decoration:underline;text-underline-offset:2px}
+
+@media(max-width:680px){
+  .masthead .in{padding:12px 18px;gap:10px 18px}
+  .masthead nav{margin-left:0;width:100%;gap:18px}
+  .sheet{padding:0 18px 60px}
+  .edition{padding:34px 0 24px}
+  .version{font-size:clamp(46px,14vw,68px)}
+  .lede{font-size:16px}
+  .facts{gap:2px 20px}
+  .sec h2{font-size:18px}
+  .sec .aside{display:none}
+  .feat{grid-template-columns:1fr;row-gap:5px}
+  .links li{grid-template-columns:1fr;row-gap:2px}
+  .item{column-gap:10px;padding-right:4px}
+  .item .name{font-size:11.5px}
+  th,td{padding-right:8px}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{transition:none!important;animation:none!important}
+}</style>
+</head>
+<body>
+<header class="masthead">
+  <div class="in">
+    <span class="wordmark">LX Mod</span>
+    <span class="sub">发行记录 / 桌面版</span>
+    <nav>
+      <a href="#download">下载</a>
+      <a href="#features">功能一览</a>
+      <a href="#install">安装</a>
+      <a href="#faq">常见问题</a>
+      <a href="#links">项目地址</a>
+      <a href="download.html">手机版</a>
+      <a href="desktop.html" aria-current="page">桌面版</a>
+      <a href="index.html">一起听网页版</a>
+    </nav>
+  </div>
+</header>
+<main class="sheet">
+
+  <div class="edition">
+    <p class="kicker">WINDOWS / LINUX · 桌面版 v1.1.6</p>
+    <h1 class="version"><span class="mark" aria-hidden="true"></span>1.1.6</h1>
+    <p class="lede">这一版只修问题：云同步一直报 403、听歌报告边放边看永远是 0、同一句歌词上下显示两遍。三处都是 1.1.5 上线当天撞上的，与手机版 1.22.39 同一批修复。</p>
+    <dl class="facts">
+      <div><dt>系统</dt><dd>Windows 10/11 x64 · Linux x64</dd></div>
+      <div><dt>内核</dt><dd>Electron 42</dd></div>
+      <div><dt>对齐</dt><dd>手机版 1.22.39</dd></div>
+      <div><dt>作者</dt><dd>月下独酌</dd></div>
+    </dl>
+  </div>
+
+  <section>
+    <div class="sec"><h2>先说清楚</h2><span class="bar"></span></div>
+    <div class="callout">
+      <p><strong>这是非官方二改版，与洛雪官方无关联。</strong>安装包没有购买代码签名证书，Windows 首次运行可能提示「已保护你的电脑」，点「更多信息」再点「仍要运行」就行。介意的话可以先用绿色版，解压直接运行。</p>
+      <p>桌面版和手机版一样不内置音源。装好后到「设置 → 基本设置 → 音乐 API → 导入」导入音源脚本，播放和下载才会真正按所选音质取链。</p>
+      <p>从 1.1.2 或更早版本升级，直接覆盖安装即可，歌单与设置都保留。1.1.1 及更早的 Windows 版若出现「装完只有进程、没有窗口」，装 1.1.2 或本版都能解决。</p>
+    </div>
+  </section>
+
+  <section id="download">
+    <div class="sec"><h2>下载</h2><span class="bar"></span><span class="aside">4 个文件</span></div>
+    <div class="list">
+      <a class="item" href="downloads/LXMod-Desktop-v1.1.6-win-x64-Setup.exe" download>
+        <div class="name">LXMod-Desktop-v1.1.6-win-x64-Setup.exe</div>
+        <div class="desc">Windows 安装版。装到本机，带开始菜单与桌面快捷方式，多数人用这个。</div>
+        <div class="side"><span class="size">115.8 MB</span><span class="go">下载</span></div>
+      </a>
+      <a class="item" href="downloads/LXMod-Desktop-v1.1.6-win-x64-green.7z" download>
+        <div class="name">LXMod-Desktop-v1.1.6-win-x64-green.7z</div>
+        <div class="desc">Windows 绿色版。解压即用，不写注册表，适合放 U 盘或临时试用。</div>
+        <div class="side"><span class="size">95.3 MB</span><span class="go">下载</span></div>
+      </a>
+      <a class="item" href="downloads/LXMod-Desktop-v1.1.6-linux-x64.tar.gz" download>
+        <div class="name">LXMod-Desktop-v1.1.6-linux-x64.tar.gz</div>
+        <div class="desc">Linux 免安装包。解压后运行 <code>LXMod-Desktop-v1.1.6-linux-x64/lx-music-desktop</code>，主流 x64 发行版可用。</div>
+        <div class="side"><span class="size">126.4 MB</span><span class="go">下载</span></div>
+      </a>
+      <a class="item" href="downloads/lxmod-desktop-src-v1.1.6.zip" download>
+        <div class="name">lxmod-desktop-src-v1.1.6.zip</div>
+        <div class="desc">完整可构建源码，不含 node_modules 与构建产物，含二改说明文档。</div>
+        <div class="side"><span class="size">13.1 MB</span><span class="go">下载</span></div>
+      </a>
+    </div>
+  </section>
+
+  <section id="features">
+    <div class="sec"><h2>功能一览</h2><span class="bar"></span><span class="aside">对照手机版 1.22.39</span></div>
+    <div class="feats">
+      <div class="feat">
+        <h3>全 11 档音质</h3>
+        <div class="feat-body">
+
+        <p>播放 8 档、下载 11 档。设置里能选、能按所选档位向音源发起请求；声明不全或请求失败时自动逐档回退，不提前降级。下载弹窗带「最佳音质」，一键选歌曲最高可用档。</p>
+        <div class="qualities">128k 192k 320k flac flac24bit hires atmos atmos_plus master ape wav</div>
+        </div>
+      </div>
+      <div class="feat">
+        <h3>我的音乐 · 三平台</h3>
+        <div class="feat-body">
+
+        <p>顶部切换网易云 / QQ 音乐 / 酷狗，手机号 / 扫码登录或粘贴 Cookie，共 20 个内容入口。</p>
+        <ul>
+          <li>网易云：每日推荐、我喜欢的、歌单、心动模式、收藏专辑、关注歌手、私人 FM、新碟、云盘</li>
+          <li>QQ 音乐：每日推荐、猜你喜欢、新歌、我喜欢的、歌单、推荐歌单</li>
+          <li>酷狗：我喜欢的、我的歌单、推荐歌单</li>
+        </ul>
+        </div>
+      </div>
+      <div class="feat">
+        <h3>手机号 / 扫码登录</h3>
+        <div class="feat-body">
+
+        <p>「我的音乐」不再只能按 F12 复制 Cookie。点「打开登录窗口（手机号 / 扫码）」，应用内用独立 session 打开官方登录页，输手机号 + 验证码或扫码，成功后自动读 Cookie 落库、窗口自动关闭。</p>
+        <ul>
+          <li>网易云：music.163.com/m/login，认 <code>MUSIC_U</code></li>
+          <li>QQ 音乐：y.qq.com，认 <code>qm_keyst</code> / <code>qqmusic_key</code></li>
+          <li>酷狗：www.kugou.com，认 <code>KuGoo</code> / <code>kg_music</code></li>
+        </ul>
+        </div>
+      </div>
+      <div class="feat">
+        <h3>云盘</h3>
+        <div class="feat-body">
+
+        <p>两种网盘放在同一个页面：网易云音乐云盘，以及 WebDAV（坚果云等），可以浏览目录、点开即播。</p>
+        </div>
+      </div>
+      <div class="feat">
+        <h3>本地音乐</h3>
+        <div class="feat-body">
+
+        <p>多文件夹递归扫描 mp3 / flac / ape / wav / m4a 等，读取标签与时长并缓存；支持搜索、播放全部、收藏，列表里显示音质徽标。</p>
+        </div>
+      </div>
+      <div class="feat">
+        <h3>一起听</h3>
+        <div class="feat-body">
+
+        <p>与手机版同一协议、同一房间。</p>
+        <ul>
+          <li>房主权威 + 播放源机制，成员切歌后房间照样同步</li>
+          <li>进度偏差自动校正、成员列表、转交房主、聊天</li>
+          <li>「在浏览器打开网页版」：手机浏览器免装 App 直接加入</li>
+        </ul>
+        </div>
+      </div>
+      <div class="feat">
+        <h3>歌曲下载</h3>
+        <div class="feat-body">
+
+        <p>播放栏与播放详情页都加了下载按钮，点开选音质；默认下载音质可记忆，文件命名、并发数、封面与歌词嵌入都在下载设置里。</p>
+        </div>
+      </div>
+      <div class="feat">
+        <h3>平台设置</h3>
+        <div class="feat-body">
+
+        <p>音源音质测试（逐档取链验证）、三平台账号状态、一起听中继与网页版地址、自定义主题背景、听歌播报（语速 + 试听）、关于与检查更新。</p>
+        </div>
+      </div>
+      <div class="feat">
+        <h3>原有功能不动</h3>
+        <div class="feat-body">
+
+        <p>搜索、歌单、排行榜、我的列表、下载、逐字歌词、桌面歌词、音效、音源脚本、深浅色主题全部保留，和上游 2.12.6 一致。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="install">
+    <div class="sec"><h2>安装与使用</h2><span class="bar"></span></div>
+    <ol class="steps">
+      <li>下载安装版，双击运行。若出现 SmartScreen 提示，点「更多信息」再点「仍要运行」。</li>
+      <li>安装完成后打开 LX Mod。想用「我的音乐」，点「打开登录窗口（手机号 / 扫码）」登录，或继续用粘贴 Cookie。</li>
+      <li>登录窗口是独立的持久 session，不影响系统浏览器与主窗口；退出登录会一并清掉它，下次打开不会直接是已登录状态。「粘贴 Cookie」保留在折叠区，登录窗打不开时仍可用。</li>
+      <li>想一起听：打开「一起听」，填昵称，创建房间，把 6 位房间码发给朋友，手机版也能进同一个房间。</li>
+      <li>导入音源脚本：设置 → 基本设置 → 音乐 API → 导入。导入后播放与下载才会按所选音质取链。</li>
+      <li>本地音乐：左侧「本地音乐」→ 添加文件夹，自动扫描。</li>
+    </ol>
+  </section>
+
+  <section>
+    <div class="sec"><h2>文件校验</h2><span class="bar"></span><span class="aside">SHA-256</span></div>
+    <table>
+      <thead><tr><th>文件</th><th>大小</th><th>SHA-256 前 16 位</th></tr></thead>
+      <tbody id="checksum-body">
+        <tr><td colspan="3" class="muted">正在读取校验信息…</td></tr>
+      </tbody>
+    </table>
+    <p class="table-note">完整校验值在下载目录的 <code>SHA256SUMS.txt</code>。Windows 可用 <code>certutil -hashfile 文件名 SHA256</code> 核对。</p>
+    <p class="table-note">程序检查更新会同时读取主站 <a href="downloads/desktop-version.json">desktop-version.json</a> 与桌面版 GitHub Release 清单，取版本号更高的一份，单源失败不影响结果。四个产物的 SHA-256 已与 GitHub Release v1.1.6 逐一核对。</p>
+  </section>
+
+  <section id="faq">
+    <div class="sec"><h2>常见问题</h2><span class="bar"></span></div>
+    <div class="faq">
+      <details>
+        <summary>和手机版的数据互通吗？</summary>
+        <p>不互通。电脑版是独立的桌面应用，歌单、设置、登录状态都存在本机。一起听房间是互通的，手机和电脑可以进同一个房间。</p>
+      </details>
+      <details>
+        <summary>三平台怎么登录？还要手动复制 Cookie 吗？</summary>
+        <p>1.1.3 起可以直接在应用内登录：点「打开登录窗口（手机号 / 扫码）」，用手机号 + 验证码或扫码，成功后自动读 Cookie 落库，窗口自动关闭。网易云认 <code>MUSIC_U</code>，QQ 认 <code>qm_keyst</code>，酷狗认 <code>KuGoo</code>。「粘贴 Cookie」仍保留在折叠区，登录窗打不开时可用；QQ / 酷狗进页面会自动点一次导航栏的「登录」。</p>
+      </details>
+      <details>
+        <summary>云盘里的歌点了没声音？</summary>
+        <p>网易云云盘的部分歌曲受版权限制，能否播放取决于账号权限和音源脚本。WebDAV 则是先下载到临时目录再播放，大文件首次打开会等几秒。</p>
+      </details>
+      <details>
+        <summary>一起听连不上 / 一直重连？</summary>
+        <p>默认用的是公网中继。如果所在网络屏蔽了 WebSocket，可以在「平台设置 → 一起听」里换成自建地址，例如 <code>ws://192.168.1.10:23333</code>，服务端见手机版仓库的 <code>listen-together-server</code>。</p>
+      </details>
+      <details>
+        <summary>装完只有进程、没有窗口？</summary>
+        <p>1.1.1 及更早的 Windows 版打包时带错了数据库原生模块（ABI 不匹配），数据库 worker 起不来，主进程就一直等。1.1.2 换成 N-API 预编译产物后已修复，覆盖安装即可。若仍打不开，启动时会弹窗写明原因和日志目录，不再静默卡死。</p>
+      </details>
+      <details>
+        <summary>会覆盖我原来的洛雪吗？</summary>
+        <p>不会。应用名是「LX Mod」，AppId 与官方不同，可以和官方版同时安装；但两者数据目录独立，歌单不共享。</p>
+      </details>
+      <details>
+        <summary>11 档音质都能用吗？为什么选了没变化？</summary>
+        <p>「能选、能按档位请求」和「音源真的返回该档位」是两回事。桌面版会按你选的档位向音源发起请求，失败后逐档回退；能否拿到 Master / Atmos / Hi-Res 取决于导入的音源脚本与账号权限。可在「平台设置 → 音源音质测试」里逐档验证。</p>
+      </details>
+      <details>
+        <summary>怎么确认电脑版和手机版功能一致？</summary>
+        <p>功能基线按手机版 v1.22.39 的功能清单逐项对齐：1.22.36 ~ 1.22.38 补齐手机号登录、三端云同步、听歌报告，1.1.4 ~ 1.1.6 对应歌词时间解析、翻译占位、同步地址与听歌记账四处修复。手机特有的系统能力（Android 锁屏 / 灵动岛歌词、背屏适配、系统 TTS 引擎）在桌面端由原生能力替代。</p>
+      </details>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec"><h2>更新日志</h2><span class="bar"></span></div>
+    <table>
+      <thead><tr><th>版本</th><th>内容</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="mono">v1.1.6</td>
+          <td>修 1.1.5 暴露的三个问题（与手机版 1.22.39 同步）：① 云同步报 403 —— 默认同步地址自带 ?sharecode=xxx，拼接口名时接到了整串末尾，网关读到的 sharecode 被污染直接拒，改为接口名插到路径末尾、查询串重建；② 听歌报告播放中不更新 —— 之前只在切歌时结算，现在播放中每 5 秒落账、打开报告前先结算在播的那段；③ 同一句歌词显示两遍 —— 翻译文件里与正文相同的行被当译文挂上，解析时按「与正文相同 / 已挂译文相同」跳过，桌面歌词下发前再过滤一遍。</td>
+        </tr>
+        <tr>
+          <td class="mono">v1.1.5</td>
+          <td>新增三端云同步：与手机版填同一个同步码和密钥，共用一份歌单与设置。按「一个歌单 / 一个设置项」增量合并，只传改过的部分；删除写墓碑，另一台设备跟着删；两端同时改按修改时间决胜；设置只同步音源、播放方式、逐字歌词样式这类跨端有意义的部分，窗口尺寸 / 音量 / 桌面歌词坐标留在本机。新增听歌报告：统计听歌时长、播放次数、Top 歌曲 / 歌手、音源分布、24 小时时段分布与连续天数，满 30 秒才算一次有效播放，数据只存本机。翻译文件里的 // 占位不再当成译文显示。</td>
+        </tr>
+        <tr>
+          <td class="mono">v1.1.4</td>
+          <td>修复桌面歌词卡在「词:李思源」这类制作信息行不动、要等下一句正文才跳：歌词时间解析把 [00:00.06] 算成 600ms（正确 60ms），凡是 0.01~0.09 秒打轴的行整体推迟 10 倍，改成小数位统一补到 3 位；顺带解决 [00:01.05] 与 [00:01.5] 撞行导致正文被当翻译吞掉，以及拖动进度条后歌词不跟手。更新检查与下载页迁到与手机版同一个站点，清单、页面、安装包版本一次改齐。</td>
+        </tr>
+        <tr>
+          <td class="mono">v1.1.3</td>
+          <td>修复切歌 / 播放时的歌词崩溃（与手机版 1.22.36 同根因，桌面版表现为首次播放报 null.length、改倍速报 undefined.animation、切到无歌词的歌后上一首歌词继续走）：TimeoutTools 起新链前先 clear、回调判空，LinePlayer / FontPlayer 数组取值加边界，FontPlayer.pause 里写错的 maxLine 改为 maxFontNum，无歌词时显式 setLyric('', [])。新增三平台手机号 / 扫码登录（应用内独立 session，自动读 Cookie）；关于页换成手机版版式；许可协议与更新弹窗里的链接改到本仓库。</td>
+        </tr>
+        <tr>
+          <td class="mono">v1.1.2</td>
+          <td>修复版，功能与 1.1.1 一致。改用 better-sqlite3 的 N-API 预编译产物，解决 Windows 上「装完只有进程、没有窗口」；数据库初始化加错误监听与 15 秒超时，失败弹窗写明原因和日志目录；修复检查更新永远提示「已是最新」；更新清单改为主站与 GitHub Release 同时取、取更高一份；主进程移除 electron-updater。</td>
+        </tr>
+        <tr>
+          <td class="mono">v1.1.1</td>
+          <td>修复关于页与更新弹窗指向洛雪官方、点更新会装回官方版的问题；移除内置自动下载更新；补齐安装包图标与文件版本信息；打包配置改用二改版仓库。</td>
+        </tr>
+        <tr>
+          <td class="mono">v1.1.0</td>
+          <td>与手机版 v1.22.35 功能对齐：全 11 档音质（按档位请求 + 逐档回退 + 最佳音质）、我的音乐扩展到网易云 / QQ / 酷狗三平台（20 个入口）、播放栏与播放详情页下载按钮、默认下载音质、一起听播放源机制与网页版入口、音源音质测试、自定义主题背景、听歌播报、关于页主页 / 源码 / 检查更新入口；修复一起听在无桌面环境下建房卡死。</td>
+        </tr>
+        <tr>
+          <td class="mono">v1.0.0</td>
+          <td>首个桌面二改版：新增我的音乐、云盘（网易云 + WebDAV）、本地音乐、一起听、平台设置；基于 LX Music Desktop 2.12.6。</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="links">
+    <div class="sec"><h2>项目地址</h2><span class="bar"></span></div>
+    <ul class="links">
+      <li><span class="lab">手机版源码</span><a href="https://github.com/yzdz666/lx-music-mobile-mod/" target="_blank" rel="noopener">github.com/yzdz666/lx-music-mobile-mod</a></li>
+      <li><span class="lab">桌面版源码</span><a href="https://github.com/yzdz666/lx-music-desktop-mod" target="_blank" rel="noopener">github.com/yzdz666/lx-music-desktop-mod</a></li>
+      <li><span class="lab">桌面版下载页</span><a href="desktop.html">desktop.html</a></li>
+      <li><span class="lab">备用下载</span><a href="https://github.com/yzdz666/lx-music-desktop-mod/releases/latest" target="_blank" rel="noopener">github.com/yzdz666/lx-music-desktop-mod/releases/latest</a></li>
+    </ul>
+  </section>
+  <footer>
+    <p>LX Mod 桌面版 · 作者 月下独酌（QQ 3139606844）</p>
+    <p>基于 <a href="https://github.com/lyswhut/lx-music-desktop" target="_blank" rel="noopener">lx-music-desktop</a> 2.12.6 二次开发，遵循上游 Apache-2.0 许可，与洛雪官方无关联。</p>
+    <p>桌面版 v1.1.6 与手机版 v1.22.39 同步 · 四个产物均与 GitHub Release v1.1.6 逐一核对 SHA-256 · 2026-11-10</p>
+    <p>本页仅提供二改版下载，音源脚本与歌曲版权归各自权利人所有。</p>
+  </footer>
+</main>
+
+<script>
+  // 分享网关要求所有请求都带 sharecode：站内相对链接与 fetch 若丢了查询参数会被拦成 403。
+  var qs = location.search
+  Array.prototype.forEach.call(document.querySelectorAll('a[href]'), function (a) {
+    var href = a.getAttribute('href')
+    // 站内链接（相对路径或 / 开头）才补参；锚点、外链、data: 一律不动
+    if (!href || /^(https?:|#|mailto:|data:)/.test(href) || href.indexOf('sharecode') !== -1) return
+    a.setAttribute('href', href + qs)
+  })
+  ;(function () {
+    var names = {
+      'LXMod-Desktop-v1.1.6-win-x64-Setup.exe': 'Windows 安装版',
+      'LXMod-Desktop-v1.1.6-win-x64-green.7z': 'Windows 绿色版',
+      'LXMod-Desktop-v1.1.6-linux-x64.tar.gz': 'Linux 免安装包',
+      'lxmod-desktop-src-v1.1.6.zip': '二改源码'
+    };
+    var body = document.getElementById('checksum-body');
+    function size(n) {
+      if (!n) return '—';
+      if (n > 1024 * 1024) return (n / 1024 / 1024).toFixed(1) + ' MB';
+      return Math.round(n / 1024) + ' KB';
+    }
+    fetch('downloads/files-desktop.json' + qs + (qs ? '&' : '?') + '_=' + Date.now(), { cache: 'no-store' })
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function (list) {
+        if (!Array.isArray(list) || !list.length) throw new Error('empty');
+        body.innerHTML = list.map(function (f) {
+          return '<tr><td>' + (names[f.name] || f.name) + '</td><td class="mono">' + size(f.size) +
+            '</td><td class="mono" title="' + f.sha256 + '">' + f.sha256.slice(0, 16) + '…</td></tr>';
+        }).join('');
+      })
+      .catch(function () {
+        body.innerHTML = '<tr><td colspan="3" class="muted">校验信息没读到，去下载目录看 SHA256SUMS.txt</td></tr>';
+      });
+  })();
+</script>
+</body>
+</html>

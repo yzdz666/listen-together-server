@@ -5,3 +5,12 @@ web/downloads/*.zip
 # 管理密码：优先 ADMIN_PASSWORD 环境变量，其次 .admin-secret 文件；
 # 两者都没有时后台接口整体返回 503。密码只存在仓库外，admin.js / admin.html 可安全入库。
 .admin-secret
+
+# 同步空间数据目录：里面是用户的歌单与设置，绝不能入库
+data/
+
+# 桌面版安装包 / 绿色版 / 源码压缩包（发布走 Release 或下载站，不进仓库）
+web/downloads/*.exe
+web/downloads/*.7z
+web/downloads/*.tar.gz
+web/downloads/*.blockmap

@@ -1,0 +1,86 @@
+{
+  "version": "2.12.6",
+  "modVersion": "1.1.6",
+  "date": "2026-11-10",
+  "desc": "LX Mod 桌面版 v1.1.6（基于 LX Music Desktop 2.12.6）\n\n修复 1.1.5 暴露的三个问题，与手机版 1.22.39 同步：\n1. 云同步报 403：默认同步地址自带 ?sharecode=xxx，拼接口名时接到了整串末尾，网关读到的 sharecode 被污染直接拒。改为接口名插到路径末尾、查询串重建，与手机版同一套逻辑。\n2. 听歌报告播放中不更新：之前只在切歌时结算，一边放歌一边打开报告总是 0。现在播放中每 5 秒落一次账，切歌时按当前播放状态把计时接上，打开报告前先结算在播的那段。\n3. 同一句歌词显示两遍：翻译文件里有与正文完全相同的行，被挂成译文后渲染成正文 + 小字两行，桌面歌词窗口两行直接拼接更明显。解析时按「与正文相同 / 已挂译文相同」跳过，桌面歌词下发前再过滤一遍。\n\n装好后到「设置 → 基本设置 → 音乐 API → 导入」导入音源。",
+  "homepage": "https://af384ee6deb6e09e2.app.workbuddy.host/desktop.html?sharecode=MKPWEVLBUS",
+  "repository": "https://github.com/yzdz666/lx-music-desktop-mod",
+  "repositoryMobile": "https://github.com/yzdz666/lx-music-mobile-mod",
+  "download": {
+    "windowsSetup": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/LXMod-Desktop-v1.1.6-win-x64-Setup.exe?sharecode=MKPWEVLBUS",
+    "windowsGreen": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/LXMod-Desktop-v1.1.6-win-x64-green.7z?sharecode=MKPWEVLBUS",
+    "linux": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/LXMod-Desktop-v1.1.6-linux-x64.tar.gz?sharecode=MKPWEVLBUS",
+    "source": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-desktop-src-v1.1.6.zip?sharecode=MKPWEVLBUS"
+  },
+  "downloadMirror": {
+    "windowsSetup": "https://github.com/yzdz666/lx-music-desktop-mod/releases/latest/download/LXMod-Desktop-v1.1.6-win-x64-Setup.exe",
+    "windowsGreen": "https://github.com/yzdz666/lx-music-desktop-mod/releases/latest/download/LXMod-Desktop-v1.1.6-win-x64-green.7z",
+    "linux": "https://github.com/yzdz666/lx-music-desktop-mod/releases/latest/download/LXMod-Desktop-v1.1.6-linux-x64.tar.gz",
+    "source": "https://github.com/yzdz666/lx-music-desktop-mod/releases/latest/download/lxmod-desktop-src-v1.1.6.zip"
+  },
+  "history": [
+    {
+      "version": "2.12.6",
+      "modVersion": "1.1.5",
+      "date": "2026-11-10",
+      "desc": "LX Mod 桌面版 v1.1.5（基于 LX Music Desktop 2.12.6）\n\n1. 新增三端云同步：与手机版填同一个同步码和密钥，共用一份歌单与设置。按「一个歌单 / 一个设置项」增量合并，只传改过的部分；删除会写墓碑，另一台设备跟着删；两端同时改按修改时间决胜。设置只同步音源、播放方式、逐字歌词样式这类跨端有意义的部分，窗口尺寸 / 音量 / 桌面歌词坐标留在本机。\n2. 新增听歌报告：设置 → 听歌报告。统计听歌时长、播放次数、Top 歌曲 / 歌手、音源分布、24 小时时段分布与连续天数；满 30 秒才算一次有效播放，数据只存本机。\n3. 翻译文件里的 // 占位不再被当成译文显示（与手机版同步修复）。\n\n装好后到「设置 → 基本设置 → 音乐 API → 导入」导入音源。",
+      "history": [
+        {
+          "version": "1.1.4",
+          "desc": "LX Mod 桌面版 v1.1.4（基于 LX Music Desktop 2.12.6）\n\n1. 修桌面歌词卡在「词:李思源」这类制作信息行不动、要等下一句正文才跳：歌词时间解析把 [00:00.06] 算成 600ms（正确 60ms），凡是 0.01~0.09 秒打轴的行整体推迟 10 倍。改成小数位统一补到 3 位后，.06 与 .060 等价。App 内歌词与桌面歌词窗口共用这份解析，两个窗口一起修好。\n2. 连带的撞行问题一并解决：[00:01.05] 之前被算成 1500ms，和 [00:01.5] 重复，后一句会被当作翻译行吞掉。\n3. 拖动进度条后歌词不跟手：进度跳变现在会通知歌词播放器重排，拖到哪句就显示哪句。\n4. 更新检查与下载页迁到与手机版同一个站点，主源、清单、页面版本一次改齐；GitHub Release 仍作备用源，两源取版本号更高的那份。\n\n装好后到「设置 → 基本设置 → 音乐 API → 导入」导入音源。"
+        },
+        {
+          "version": "1.1.3",
+          "desc": "修复切歌 / 播放时的歌词崩溃；新增三平台手机号与扫码登录；关于页改成手机版版式。"
+        },
+        {
+          "version": "1.1.2",
+          "desc": "修复装完只有进程没有窗口（原生模块 ABI 不匹配）；检查更新修复；移除 electron-updater。"
+        },
+        {
+          "version": "1.1.1",
+          "desc": "修复更新链路会把用户装回官方版；关于页/更新弹窗链接改为二改版；安装包补齐图标与版本信息。"
+        },
+        {
+          "version": "1.1.0",
+          "desc": "首个正式版：功能对齐手机版 v1.22.35，检查更新改读自建清单。"
+        }
+      ],
+      "homepage": "https://af384ee6deb6e09e2.app.workbuddy.host/desktop.html?sharecode=MKPWEVLBUS",
+      "download": {
+        "windowsSetup": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/LXMod-Desktop-v1.1.5-win-x64-Setup.exe?sharecode=MKPWEVLBUS",
+        "windowsGreen": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/LXMod-Desktop-v1.1.5-win-x64-green.7z?sharecode=MKPWEVLBUS",
+        "linux": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/LXMod-Desktop-v1.1.5-linux-x64.tar.gz?sharecode=MKPWEVLBUS",
+        "source": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-desktop-src-v1.1.5.zip?sharecode=MKPWEVLBUS"
+      },
+      "downloadMirror": {
+        "windowsSetup": "https://github.com/yzdz666/lx-music-desktop-mod/releases/latest/download/LXMod-Desktop-v1.1.5-win-x64-Setup.exe",
+        "windowsGreen": "https://github.com/yzdz666/lx-music-desktop-mod/releases/latest/download/LXMod-Desktop-v1.1.5-win-x64-green.7z",
+        "linux": "https://github.com/yzdz666/lx-music-desktop-mod/releases/latest/download/LXMod-Desktop-v1.1.5-linux-x64.tar.gz",
+        "source": "https://github.com/yzdz666/lx-music-desktop-mod/releases/latest/download/lxmod-desktop-src-v1.1.5.zip"
+      },
+      "repository": "https://github.com/yzdz666/lx-music-desktop-mod",
+      "repositoryMobile": "https://github.com/yzdz666/lx-music-mobile-mod"
+    },
+    {
+      "version": "1.1.4",
+      "desc": "LX Mod 桌面版 v1.1.4（基于 LX Music Desktop 2.12.6）\n\n1. 修桌面歌词卡在「词:李思源」这类制作信息行不动、要等下一句正文才跳：歌词时间解析把 [00:00.06] 算成 600ms（正确 60ms），凡是 0.01~0.09 秒打轴的行整体推迟 10 倍。改成小数位统一补到 3 位后，.06 与 .060 等价。App 内歌词与桌面歌词窗口共用这份解析，两个窗口一起修好。\n2. 连带的撞行问题一并解决：[00:01.05] 之前被算成 1500ms，和 [00:01.5] 重复，后一句会被当作翻译行吞掉。\n3. 拖动进度条后歌词不跟手：进度跳变现在会通知歌词播放器重排，拖到哪句就显示哪句。\n4. 更新检查与下载页迁到与手机版同一个站点，主源、清单、页面版本一次改齐；GitHub Release 仍作备用源，两源取版本号更高的那份。\n\n装好后到「设置 → 基本设置 → 音乐 API → 导入」导入音源。"
+    },
+    {
+      "version": "1.1.3",
+      "desc": "修复切歌 / 播放时的歌词崩溃；新增三平台手机号与扫码登录；关于页改成手机版版式。"
+    },
+    {
+      "version": "1.1.2",
+      "desc": "修复装完只有进程没有窗口（原生模块 ABI 不匹配）；检查更新修复；移除 electron-updater。"
+    },
+    {
+      "version": "1.1.1",
+      "desc": "修复更新链路会把用户装回官方版；关于页/更新弹窗链接改为二改版；安装包补齐图标与版本信息。"
+    },
+    {
+      "version": "1.1.0",
+      "desc": "首个正式版：功能对齐手机版 v1.22.35，检查更新改读自建清单。"
+    }
+  ]
+}

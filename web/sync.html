@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>同步空间 · 查看云端备份</title>
+<style>
+  :root {
+    --bg: #0e1116;
+    --card: rgba(255, 255, 255, 0.06);
+    --card-solid: #171c24;
+    --line: rgba(255, 255, 255, 0.1);
+    --text: #e8ecf2;
+    --sub: #9aa4b2;
+    --primary: #4daf7c;
+    --primary-weak: rgba(77, 175, 124, 0.16);
+    --danger: #ff8080;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; min-height: 100%; }
+  body {
+    background: radial-gradient(1200px 600px at 20% -10%, #1d2a33 0%, transparent 60%), var(--bg);
+    color: var(--text);
+    font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    display: flex;
+    justify-content: center;
+  }
+  .app { width: 100%; max-width: 640px; padding: 20px 16px 40px; display: flex; flex-direction: column; gap: 14px; }
+  h1 { font-size: 17px; margin: 6px 0 2px; font-weight: 600; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  h1 small { font-size: 12px; color: var(--sub); font-weight: 400; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 16px; backdrop-filter: blur(12px); }
+  label { display: block; font-size: 12px; color: var(--sub); margin: 10px 0 6px; }
+  input {
+    width: 100%; padding: 11px 13px; border-radius: 11px; border: 1px solid var(--line);
+    background: rgba(0,0,0,.28); color: var(--text); font-size: 15px; outline: none;
+    font-family: inherit;
+  }
+  input:focus { border-color: var(--primary); }
+  input.mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 1px; }
+  .row { display: flex; gap: 10px; margin-top: 14px; }
+  .row > * { flex: 1; }
+  button {
+    appearance: none; border: 0; border-radius: 12px; padding: 12px 16px; font-size: 15px;
+    background: var(--primary-weak); color: #8fe0b3; font-weight: 600; cursor: pointer; font-family: inherit;
+  }
+  button.primary { background: var(--primary); color: #06210f; }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  button.ghost { background: transparent; border: 1px solid var(--line); color: var(--sub); font-weight: 500; }
+  .hint { font-size: 12px; color: var(--sub); margin: 10px 0 0; }
+  .err { color: var(--danger); font-size: 13px; min-height: 18px; margin: 8px 0 0; }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .stat { text-align: center; padding: 6px 2px; }
+  .stat b { display: block; font-size: 20px; font-weight: 700; letter-spacing: -.5px; }
+  .stat span { font-size: 11px; color: var(--sub); }
+  .meta { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); font-size: 12px; color: var(--sub); display: flex; flex-wrap: wrap; gap: 6px 14px; }
+  .meta code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--text); }
+  .tabs { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+  .tab { font-size: 13px; padding: 7px 14px; border-radius: 999px; background: rgba(255,255,255,.06); color: var(--sub); border: 0; cursor: pointer; font-family: inherit; }
+  .tab.on { background: var(--primary-weak); color: #8fe0b3; }
+  .list { border: 1px solid var(--line); border-radius: 12px; margin-bottom: 10px; overflow: hidden; }
+  .list-head { display: flex; align-items: center; gap: 10px; padding: 12px 14px; cursor: pointer; }
+  .list-head:hover { background: rgba(255,255,255,.04); }
+  .list-name { flex: 1; min-width: 0; font-size: 14px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .list-sub { font-size: 11px; color: var(--sub); flex: 0 0 auto; }
+  .chev { color: var(--sub); font-size: 12px; transition: transform .15s; flex: 0 0 auto; }
+  .list.open .chev { transform: rotate(90deg); }
+  .songs { display: none; border-top: 1px solid var(--line); padding: 6px 0; max-height: 420px; overflow: auto; }
+  .list.open .songs { display: block; }
+  .song { display: flex; gap: 10px; padding: 6px 14px; font-size: 13px; align-items: baseline; }
+  .song i { font-style: normal; color: var(--sub); font-size: 11px; width: 24px; text-align: right; flex: 0 0 auto; }
+  .song .t { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .song .s { flex: 0 0 auto; max-width: 40%; color: var(--sub); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .more { padding: 8px 14px; font-size: 12px; color: var(--sub); }
+  .setting { display: flex; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,.05); font-size: 13px; align-items: flex-start; }
+  .setting:last-child { border-bottom: 0; }
+  .setting .k { flex: 0 0 42%; color: var(--sub); word-break: break-all; }
+  .setting .v { flex: 1; min-width: 0; word-break: break-all; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; white-space: pre-wrap; }
+  .empty { color: var(--sub); font-size: 13px; padding: 16px 0; text-align: center; }
+  .badge { font-size: 11px; padding: 3px 8px; border-radius: 999px; background: rgba(255,255,255,.08); color: var(--sub); }
+  .badge.fav { background: rgba(255, 128, 128, .14); color: #ff9a9a; }
+  @media (max-width: 420px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .setting { flex-direction: column; gap: 2px; }
+    .setting .k { flex: none; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>同步空间 <small>查看云端备份的歌单与设置</small></h1>
+
+  <form class="card" id="form" autocomplete="off">
+    <label for="code">同步码</label>
+    <input id="code" class="mono" placeholder="6~12 位字母数字，例如 MKPWEVLBUS" maxlength="12" spellcheck="false" />
+    <label for="secret">同步密钥</label>
+    <input id="secret" class="mono" type="password" placeholder="新建同步空间时生成的那串密钥" spellcheck="false" />
+    <div class="row">
+      <button class="primary" id="loadBtn" type="submit">查看数据</button>
+      <button class="ghost" id="exportBtn" type="button" disabled>导出 JSON</button>
+    </div>
+    <p class="err" id="err"></p>
+    <p class="hint">同步码与密钥只在你的浏览器里用于这一次请求，不会保存、不会出现在网址里。数据来自你自己的同步服务。</p>
+  </form>
+
+  <div id="result" hidden>
+    <div class="card">
+      <div class="stats" id="stats"></div>
+      <div class="meta" id="meta"></div>
+    </div>
+    <div class="card">
+      <div class="tabs" id="tabs">
+        <button class="tab on" data-tab="list" type="button">歌单</button>
+        <button class="tab" data-tab="favorite" type="button">收藏</button>
+        <button class="tab" data-tab="settings" type="button">设置项</button>
+      </div>
+      <div id="content"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict'
+
+  var params = new URLSearchParams(location.search)
+  var sharecode = params.get('sharecode') || ''
+  var $ = function (id) { return document.getElementById(id) }
+  var codeEl = $('code')
+  var secretEl = $('secret')
+  var errEl = $('err')
+  var loadBtn = $('loadBtn')
+  var exportBtn = $('exportBtn')
+  var resultEl = $('result')
+
+  var state = { data: null, tab: 'list' }
+
+  // 允许从 ?code=XXXX 预填同步码（方便把链接发给另一台设备，密钥仍然手输）
+  if (params.get('code')) codeEl.value = String(params.get('code')).toUpperCase()
+
+  function apiPath(path) {
+    return sharecode ? path + '?sharecode=' + encodeURIComponent(sharecode) : path
+  }
+
+  function setErr(msg) { errEl.textContent = msg || '' }
+
+  function fmtTime(ts) {
+    var n = Number(ts)
+    if (!n) return '-'
+    var d = new Date(n)
+    var p = function (v) { return String(v).padStart(2, '0') }
+    return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes())
+  }
+
+  function fmtBytes(n) {
+    n = Number(n) || 0
+    if (n < 1024) return n + ' B'
+    if (n < 1024 * 1024) return (n / 1024).toFixed(1) + ' KB'
+    return (n / 1024 / 1024).toFixed(2) + ' MB'
+  }
+
+  function el(tag, cls, text) {
+    var node = document.createElement(tag)
+    if (cls) node.className = cls
+    if (text != null) node.textContent = text
+    return node
+  }
+
+  function activeItems(kind) {
+    if (!state.data || !state.data.items) return []
+    return Object.keys(state.data.items)
+      .map(function (k) { return state.data.items[k] })
+      .filter(function (item) { return item && !item.deleted && item.kind === kind })
+      .sort(function (a, b) { return (b.updatedAt || 0) - (a.updatedAt || 0) })
+  }
+
+  function songListOf(item) {
+    var list = item && item.data && item.data.list
+    return Array.isArray(list) ? list : []
+  }
+
+  function renderStats() {
+    var data = state.data
+    var lists = activeItems('list')
+    var favs = activeItems('favorite')
+    var songs = lists.concat(favs).reduce(function (sum, item) { return sum + songListOf(item).length }, 0)
+    var settings = data.settings ? Object.keys(data.settings).length : 0
+
+    var stats = $('stats')
+    stats.textContent = ''
+    ;[
+      [lists.length, '歌单'],
+      [favs.length, '收藏夹'],
+      [songs, '歌曲'],
+      [settings, '设置项']
+    ].forEach(function (pair) {
+      var box = el('div', 'stat')
+      box.appendChild(el('b', null, String(pair[0])))
+      box.appendChild(el('span', null, pair[1]))
+      stats.appendChild(box)
+    })
+
+    var meta = $('meta')
+    meta.textContent = ''
+    function addMeta(label, value) {
+      var wrap = el('span')
+      wrap.appendChild(document.createTextNode(label + ' '))
+      var code = el('code', null, String(value))
+      wrap.appendChild(code)
+      meta.appendChild(wrap)
+    }
+    addMeta('版本', 'rev ' + (data.rev || 0))
+    addMeta('更新', fmtTime(data.updatedAt))
+    addMeta('体积', fmtBytes(new Blob([JSON.stringify(data)]).size))
+    if (data.serverTime) addMeta('服务器时间', fmtTime(data.serverTime))
+  }
+
+  function renderList(kind) {
+    var box = $('content')
+    box.textContent = ''
+    var items = activeItems(kind)
+    if (!items.length) {
+      box.appendChild(el('div', 'empty', kind === 'favorite' ? '这个空间还没有收藏夹' : '这个空间还没有歌单'))
+      return
+    }
+    items.forEach(function (item) {
+      var songs = songListOf(item)
+      var card = el('div', 'list')
+      var head = el('div', 'list-head')
+      head.appendChild(el('span', 'chev', '▶'))
+      head.appendChild(el('span', 'list-name', item.name || item.id || '(未命名)'))
+      if (item.kind === 'favorite') head.appendChild(el('span', 'badge fav', '收藏'))
+      head.appendChild(el('span', 'list-sub', songs.length + ' 首 · ' + fmtTime(item.updatedAt)))
+      card.appendChild(head)
+
+      var songBox = el('div', 'songs')
+      if (!songs.length) {
+        songBox.appendChild(el('div', 'more', '（空列表）'))
+      } else {
+        var LIMIT = 300
+        songs.slice(0, LIMIT).forEach(function (song, index) {
+          var row = el('div', 'song')
+          row.appendChild(el('i', null, String(index + 1)))
+          row.appendChild(el('span', 't', (song && (song.name || song.title)) || '(未知歌曲)'))
+          var singer = song && (song.singer || song.artist)
+          if (singer) row.appendChild(el('span', 's', String(singer)))
+          songBox.appendChild(row)
+        })
+        if (songs.length > LIMIT) {
+          songBox.appendChild(el('div', 'more', '仅显示前 ' + LIMIT + ' 首，完整内容请用「导出 JSON」查看'))
+        }
+      }
+      card.appendChild(songBox)
+      head.addEventListener('click', function () { card.classList.toggle('open') })
+      box.appendChild(card)
+    })
+  }
+
+  function renderSettings() {
+    var box = $('content')
+    box.textContent = ''
+    var settings = state.data.settings || {}
+    var keys = Object.keys(settings).sort()
+    if (!keys.length) {
+      box.appendChild(el('div', 'empty', '这个空间还没有同步过设置项'))
+      return
+    }
+    keys.forEach(function (key) {
+      var entry = settings[key] || {}
+      var row = el('div', 'setting')
+      row.appendChild(el('div', 'k', key))
+      var value = entry.value
+      var text = typeof value === 'string' ? value : JSON.stringify(value)
+      row.appendChild(el('div', 'v', text == null ? 'null' : String(text)))
+      box.appendChild(row)
+    })
+  }
+
+  function renderTab() {
+    var tabs = document.querySelectorAll('.tab')
+    for (var i = 0; i < tabs.length; i++) {
+      tabs[i].classList.toggle('on', tabs[i].getAttribute('data-tab') === state.tab)
+    }
+    if (state.tab === 'settings') renderSettings()
+    else renderList(state.tab)
+  }
+
+  $('tabs').addEventListener('click', function (event) {
+    var target = event.target
+    if (!target || !target.getAttribute) return
+    var tab = target.getAttribute('data-tab')
+    if (!tab) return
+    state.tab = tab
+    renderTab()
+  })
+
+  $('form').addEventListener('submit', function (event) {
+    event.preventDefault()
+    var code = String(codeEl.value || '').trim().toUpperCase()
+    var secret = String(secretEl.value || '').trim()
+    if (!code) { setErr('请填写同步码'); codeEl.focus(); return }
+    if (!secret) { setErr('请填写同步密钥'); secretEl.focus(); return }
+
+    setErr('')
+    loadBtn.disabled = true
+    loadBtn.textContent = '读取中…'
+    exportBtn.disabled = true
+
+    fetch(apiPath('/api/sync/pull'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code: code, secret: secret })
+    }).then(function (res) {
+      return res.json().catch(function () { return {} }).then(function (body) {
+        return { ok: res.ok, status: res.status, body: body }
+      })
+    }).then(function (result) {
+      if (!result.ok || !result.body || result.body.ok === false) {
+        var reason = (result.body && result.body.error) || ''
+        if (result.status === 401 || reason === 'auth_failed') throw new Error('同步码或密钥不正确')
+        if (result.status === 429 || reason === 'rate_limited') throw new Error('请求太频繁，请稍后再试')
+        throw new Error(reason ? '读取失败：' + reason : '读取失败（HTTP ' + result.status + '）')
+      }
+      state.data = result.body
+      state.tab = 'list'
+      resultEl.hidden = false
+      renderStats()
+      renderTab()
+      exportBtn.disabled = false
+      setErr('')
+    }).catch(function (err) {
+      state.data = null
+      resultEl.hidden = true
+      setErr(err && err.message ? err.message : '网络错误，请检查同步服务地址')
+    }).finally(function () {
+      loadBtn.disabled = false
+      loadBtn.textContent = '查看数据'
+    })
+  })
+
+  exportBtn.addEventListener('click', function () {
+    if (!state.data) return
+    var blob = new Blob([JSON.stringify(state.data, null, 2)], { type: 'application/json' })
+    var url = URL.createObjectURL(blob)
+    var a = document.createElement('a')
+    a.href = url
+    a.download = 'lx-sync-' + String(codeEl.value || 'space').trim().toUpperCase() + '-' + Date.now() + '.json'
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    setTimeout(function () { URL.revokeObjectURL(url) }, 3000)
+  })
+})()
+</script>
+</body>
+</html>

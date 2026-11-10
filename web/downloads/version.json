@@ -1,9 +1,84 @@
 {
-  "version": "1.22.35",
-  "versionCode": 140000,
-  "date": "2026-11-05 11:14",
-  "desc": "v1.22.35（原包名版 cn.toside.music.mobile）· 逐字歌词与备份导入修复\n\n- 逐字歌词：整行时长完整分给每个字，短句慢歌不再「唱得比人快」\n- 逐字歌词：音频缓冲导致时钟永久超前已修正（旧逻辑缓冲 1.2s 后整首快 1.2s）\n- 逐字歌词：rAF 限 60fps，高刷屏不再打满 JS 线程——这就是「一开录屏就正常」的根因\n- 逐字歌词：行尾最高 800ms 宽限，每句最后一个字都会点亮\n- 逐字歌词：空格不再占时长；40ms 极短行（封面 / 制作信息）也能排完\n- 导入备份：歌单按 id 匹配，顺序错位不再把用户歌单写成试听列表\n- 导入备份：null 项逐层过滤，不再整段中断，失败会提示具体是哪一步\n\n可直接覆盖旧版（同包名 cn.toside.music.mobile），歌单 / 设置 / 登录态 / 云盘曲库全部保留。versionCode 140000。",
+  "version": "1.22.40",
+  "versionCode": 145000,
+  "date": "2026-11-10 12:55",
+  "desc": "v1.22.40（原包名版 cn.toside.music.mobile）· 修桌面歌词换行重影 / 听歌报告看不全 / 同步码复制 / 网页版看备份\n\n- 桌面歌词换行「糊一下又重渲染」：容器是 TextSwitcher，换行时旧句淡出、新句淡入各 300ms，两个没有背景的 TextView 叠在同一位置，逐字高亮还在推进，看起来就像渲染坏了。1.22.39 改的是译文去重，没碰到这一层。现在改成单个 LyricTextView 直切，「切换动画」保留但改为整窗轻微淡入（0.85→1，90ms），默认关闭\n- 顺带修歌词横向滚动：原来不管文字放不放得下，1.5 秒后都会启动滚动定时器空转，每 10ms 重绘一次；现在只有文本超宽才滚，翻译行固定对齐不再跟着主行跑偏\n- 听歌报告「一年 / 全部」滑不动：弹窗内容容器上的 onStartShouldSetResponder 抢走了滚动手势，Modal 已把背景遮罩拆成兄弟层；榜单从 10 首 / 8 位放宽到 50 首 / 20 位，页面不再二次截断；趋势图一年按周、全部按月聚合\n- 同步码 / 密钥可一键复制：设置页三个输入项右侧加了「复制」按钮（长按选中在部分 ROM 上会被输入法菜单抢掉）\n- 网页版查看备份：同步服务新增 /sync 页面，填同步码 + 密钥即可查看云端歌单 / 收藏 / 设置，支持导出 JSON\n- 测试 99 例全通过：歌词 33、同步 32、记账与报告 25、桌面歌词 Android View（Robolectric）9\n\n安装：从 1.22.39 覆盖安装即可，数据与同步凭据保留。",
+  "download": {
+    "arm64-v8a": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-origpkg-v1.22.40-arm64-v8a.apk?sharecode=MKPWEVLBUS",
+    "universal": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-origpkg-v1.22.40-universal.apk?sharecode=MKPWEVLBUS",
+    "backscreen": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-v1.22.40-backscreen-arm64-v8a.apk?sharecode=MKPWEVLBUS",
+    "coexist": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-v1.22.40-arm64-v8a.apk?sharecode=MKPWEVLBUS"
+  },
+  "source": "lx-music-mod-src-v1.22.40.zip",
   "history": [
+    {
+      "version": "1.22.39",
+      "versionCode": 144000,
+      "date": "2026-11-10 11:30",
+      "desc": "v1.22.39（原包名版 cn.toside.music.mobile）· 修云同步 403 / 听歌报告不涨 / 歌词显示两遍\n\n- 云同步 403：默认同步地址自带 ?sharecode=xxx，拼接口名时接到了整串末尾，请求变成 /api/sync?sharecode=xxx/create，网关读到的 sharecode 被污染直接拒。改为把接口名插到路径末尾、查询串重建（手机与电脑同一套）。之前建好的同步空间不用重建，服务端从没收到过请求\n- 听歌报告一直是 0：会话只在切歌时建、只在切歌时结算，冷启动直接播放和「边放边看报告」都记不上。现在启动即建会话、播放中每 5 秒落账、满 30 秒立刻计一次、打开报告前先结算在播的那段\n- 同一句歌词显示两遍：翻译文件里与正文相同的行被当译文挂上，渲染成正文 + 小字两行，桌面歌词更明显。App 内解析库 / 电脑版 line-player / Android 原生解析三端统一去重，渲染层再兜一层\n- 测试扩到歌词 33 例、同步 32 例、听歌记账 17 例，新增「重复译文」「地址拼接」「播放中记账」三组针对性用例\n\n安装：从 1.22.38 覆盖安装即可，数据与同步凭据保留。",
+      "download": {
+        "arm64-v8a": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-origpkg-v1.22.39-arm64-v8a.apk?sharecode=MKPWEVLBUS",
+        "universal": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-origpkg-v1.22.39-universal.apk?sharecode=MKPWEVLBUS",
+        "backscreen": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-v1.22.39-backscreen-arm64-v8a.apk?sharecode=MKPWEVLBUS",
+        "coexist": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-v1.22.39-arm64-v8a.apk?sharecode=MKPWEVLBUS"
+      },
+      "source": "lx-music-mod-src-v1.22.39.zip"
+    },
+    {
+      "version": "1.22.38",
+      "versionCode": 143000,
+      "date": "2026-11-10 09:30",
+      "desc": "v1.22.38（原包名版 cn.toside.music.mobile）· 新增三端云同步与听歌报告\n\n- 三端云同步：手机 / 电脑共用一份歌单与设置。按「一个歌单 / 一个设置项」增量合并，只传改过的部分；删除带墓碑，另一台设备跟着删；两端同时改按修改时间决胜。设置只同步主题、音质、歌词样式、播放方式这类跨端有意义的部分，音量 / 亮度 / 歌词坐标 / Cookie 留在本机（对应电脑版 1.1.5）\n- 听歌报告：设置 → 其他 → 听歌报告。统计听歌时长、播放次数、Top 歌曲 / 歌手、音源分布、24 小时时段分布、连续天数；满 30 秒才算一次有效播放，数据只存本机\n- 修复翻译文件里的 // 占位被当成译文显示（正文下面多一行竖杠）。1.22.27 只修了渲染层，这次补上 App 内歌词解析库与 Android 桌面歌词两处\n- 新增歌词回归测试 28 例、同步回归测试 21 例，随源码提供（npm run test）\n\n安装：从 1.22.37 覆盖安装即可，数据与设置保留。",
+      "history": [
+        {
+          "version": "1.22.37",
+          "versionCode": 142000,
+          "date": "2026-11-06 22:05",
+          "desc": "v1.22.37（原包名版 cn.toside.music.mobile）· 修桌面歌词卡在「词:xxx」不动 / 拖动进度条歌词不跟手\n\n- 桌面歌词一直停在「词:李思源」这类 0.0x 秒打轴的制作信息行，要等下一句正文才跳：歌词时间解析把 [00:00.06] 算成 600ms（正确 60ms），落在 0.01~0.09 秒的行整体推迟 10 倍；已改为小数位统一补到 3 位\n- 同步修正 App 内歌词（lrc-file-parser）与电脑版（lyric-font-player）同一处换算；[00:01.05] 与 [00:01.5] 也不再撞行\n- 拖动进度条会同时通知歌词播放器：播放中按新位置重排，暂停时只定位不启动时钟，拖完立刻显示目标句\n- 电脑版桌面歌词窗口同步修复（1.1.4）\n- 许可协议里的开源地址、Apache 许可证原文链接改为本仓库（yzdz666/lx-music-mobile-mod），不再指向上游项目\n\n可直接覆盖旧版（同包名 cn.toside.music.mobile），歌单 / 设置 / 登录态 / 云盘曲库全部保留。versionCode 142000。"
+        },
+        {
+          "version": "1.22.36",
+          "desc": "修切歌弹「TypeError: null is not a function」"
+        },
+        {
+          "version": "1.22.35",
+          "desc": "逐字歌词提速与缓冲校正；备份导入容错"
+        },
+        {
+          "version": "1.22.34",
+          "desc": "逐字歌词修复（行时长按字分配），该版短句慢歌偏快"
+        },
+        {
+          "version": "1.22.33",
+          "desc": "侧边栏自绘"
+        },
+        {
+          "version": "1.22.27",
+          "desc": "歌词里的 // 占位行清理"
+        }
+      ],
+      "download": {
+        "arm64-v8a": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-origpkg-v1.22.38-arm64-v8a.apk?sharecode=MKPWEVLBUS",
+        "universal": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-origpkg-v1.22.38-universal.apk?sharecode=MKPWEVLBUS",
+        "backscreen": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-v1.22.38-backscreen-arm64-v8a.apk?sharecode=MKPWEVLBUS",
+        "coexist": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-v1.22.38-arm64-v8a.apk?sharecode=MKPWEVLBUS"
+      },
+      "source": "lx-music-mod-src-v1.22.38.zip"
+    },
+    {
+      "version": "1.22.37",
+      "versionCode": 142000,
+      "date": "2026-11-06 22:05",
+      "desc": "v1.22.37（原包名版 cn.toside.music.mobile）· 修桌面歌词卡在「词:xxx」不动 / 拖动进度条歌词不跟手\n\n- 桌面歌词一直停在「词:李思源」这类 0.0x 秒打轴的制作信息行，要等下一句正文才跳：歌词时间解析把 [00:00.06] 算成 600ms（正确 60ms），落在 0.01~0.09 秒的行整体推迟 10 倍；已改为小数位统一补到 3 位\n- 同步修正 App 内歌词（lrc-file-parser）与电脑版（lyric-font-player）同一处换算；[00:01.05] 与 [00:01.5] 也不再撞行\n- 拖动进度条会同时通知歌词播放器：播放中按新位置重排，暂停时只定位不启动时钟，拖完立刻显示目标句\n- 电脑版桌面歌词窗口同步修复（1.1.4）\n- 许可协议里的开源地址、Apache 许可证原文链接改为本仓库（yzdz666/lx-music-mobile-mod），不再指向上游项目\n\n可直接覆盖旧版（同包名 cn.toside.music.mobile），歌单 / 设置 / 登录态 / 云盘曲库全部保留。versionCode 142000。"
+    },
+    {
+      "version": "1.22.36",
+      "desc": "修切歌弹「TypeError: null is not a function」"
+    },
+    {
+      "version": "1.22.35",
+      "desc": "逐字歌词提速与缓冲校正；备份导入容错"
+    },
     {
       "version": "1.22.34",
       "desc": "逐字歌词修复（行时长按字分配），该版短句慢歌偏快"
@@ -11,41 +86,6 @@
     {
       "version": "1.22.33",
       "desc": "侧边栏自绘"
-    },
-    {
-      "version": "1.22.27",
-      "desc": "歌词里的 // 占位行清理"
-    },
-    {
-      "version": "1.22.26",
-      "desc": "WebDAV 云盘音乐播放修复：302 跳转不再丢认证、限流自动重试"
-    },
-    {
-      "version": "1.22.25",
-      "desc": "App 内歌词页逐字渲染重做；修自动滚动失效 / 逐字回跳 / 时间轴断裂"
-    },
-    {
-      "version": "1.22.24",
-      "desc": "桌面歌词翻译与逐字修复；修开关污染 / 空白 / 回调堆积"
-    },
-    {
-      "version": "1.22.23",
-      "desc": "桌面歌词恢复上游常驻行为；修「一直显示 LX Music ^-^」；在线更新双源回退"
-    },
-    {
-      "version": "1.22.22",
-      "desc": "修复「已安装更高版本」装不上：versionCode 统一为 版本号×1000"
-    },
-    {
-      "version": "1.22.20",
-      "desc": "关歌词崩溃 / 退出崩溃 / 锁屏歌词失效修复；新增本地备份"
     }
-  ],
-  "download": {
-    "arm64-v8a": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-origpkg-v1.22.35-arm64-v8a.apk?sharecode=MKPWEVLBUS",
-    "universal": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-origpkg-v1.22.35-universal.apk?sharecode=MKPWEVLBUS",
-    "backscreen": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-v1.22.35-backscreen-arm64-v8a.apk?sharecode=MKPWEVLBUS",
-    "coexist": "https://af384ee6deb6e09e2.app.workbuddy.host/downloads/lxmod-v1.22.35-arm64-v8a.apk?sharecode=MKPWEVLBUS"
-  },
-  "source": "lx-music-mod-src-v1.22.35.zip"
+  ]
 }
